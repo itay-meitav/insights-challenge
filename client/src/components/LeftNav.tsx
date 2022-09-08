@@ -6,12 +6,13 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
+import config from "../assets/config";
 
 function LeftNav() {
   const location = useLocation();
   const navigate = useNavigate();
   return (
-    <Navbar collapseOnSelect expand="lg" bg="dark" variant="dark">
+    <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
       <Container>
         <Navbar.Brand>
           <Link to="/" className="nav-link">
@@ -42,14 +43,48 @@ function LeftNav() {
                 to={"/"}
                 style={{ color: "inherit", textDecoration: "inherit" }}
               >
-                Add New Item
+                Add New Post
               </NavDropdown.Item>
               <NavDropdown.Divider />
               <OverlayTrigger
                 placement="bottom"
-                overlay={<Tooltip id="button-tooltip-2"></Tooltip>}
+                overlay={
+                  <Tooltip id="button-tooltip-2">
+                    Important note - <br></br>
+                    This action may take several seconds. <br></br>
+                    When finished, the page will refresh.
+                  </Tooltip>
+                }
               >
-                <NavDropdown.Item>Reset Data</NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    fetch(config.apiHost + "", {
+                      method: "put",
+                    })
+                      .then((res) => {
+                        if (res.ok) return res.json();
+                      })
+                      .then(() => {
+                        console.log("reloading");
+                        const href = window.location.href.split(
+                          window.location.host
+                        )[1];
+                        navigate(
+                          href + (location.search ? "&" : "?") + "reload=true"
+                        );
+                        setTimeout(() => {
+                          navigate(href);
+                        });
+                        // window.location.reload(false);
+                        // location.pathname = location.pathname;
+                      })
+                      .catch((e) => {
+                        console.error(e);
+                      });
+                  }}
+                >
+                  Refresh Data
+                </NavDropdown.Item>
               </OverlayTrigger>
             </NavDropdown>
           </Nav>

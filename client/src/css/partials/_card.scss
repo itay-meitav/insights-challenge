@@ -24,3 +24,10 @@ $cardHeaderBackColor: #f2f2f2;
     padding: 10px;
   }
 }
+
+.posts {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}

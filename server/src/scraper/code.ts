@@ -1,8 +1,8 @@
 var url = require("url");
 var http = require("http");
 const fs = require("fs");
+const axios = require("axios");
 const cheerio = require("cheerio");
-
 var HttpProxyAgent = require("http-proxy-agent");
 
 // HTTP/HTTPS proxy to connect to
@@ -17,20 +17,29 @@ var opts = url.parse(endpoint);
 
 // create an instance of the `HttpProxyAgent` class with the proxy server information
 var agent = new HttpProxyAgent(proxy);
-const axios = require("axios");
+
 opts.agent = agent;
 
 const data = async () => {
   return await axios(endpoint, {
     httpAgent: agent,
-  }).then((res) => {
-    return res.data;
-  });
+  })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.error(err);
+    });
 };
 
-data().then((data) => {
-  fs.writeFileSync("./index.html", data);
-  //   const $ = cheerio.load(data);
-  //   const posts = $("div.text");
-  //   console.log(posts.text());
-});
+data()
+  .then((data) => {
+    fs.writeFileSync("./index.html", data);
+    //   const $ = cheerio.load(data);
+    //   const posts = $("div.text");
+    //   console.log(posts.text());
+  })
+  .then(() => console.log("done"))
+  .catch((err) => {
+    console.error(err);
+  });

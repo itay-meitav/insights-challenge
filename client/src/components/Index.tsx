@@ -1,15 +1,13 @@
-import React from "react";
 import Accordion from "react-bootstrap/Accordion";
 
 function Index() {
   return (
-    <div className="posts" style={{ marginTop: 80, position: "relative" }}>
+    <div className="posts" style={{ marginTop: 80 }}>
       <h5 style={{ marginBottom: 30 }}>Recent Posts</h5>
       <Accordion defaultActiveKey="0" style={{ width: 950 }}>
-        <Accordion.Item eventKey="1" style={{ position: "relative" }}>
-          <Accordion.Header>
+        <Accordion.Item eventKey="0">
+          <Accordion.Header style={{ position: "relative" }}>
             Accordion Item #1
-            <br></br>
             <div style={{ position: "absolute", right: 60, fontSize: 12 }}>
               Posted by Anonymous at 08 Sep 2022, 10:32:10 UTC
             </div>

@@ -7,10 +7,18 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
 import config from "../assets/config";
+import { IconButton } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
+import Toast from "react-bootstrap/Toast";
+import ToastContainer from "react-bootstrap/ToastContainer";
+import { useState } from "react";
+import Notifications from "./Notifications";
 
 function LeftNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [showA, setShowA] = useState(true);
+  const toggleShowA = () => setShowA(!showA);
   return (
     <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
       <Container>
@@ -89,6 +97,10 @@ function LeftNav() {
             </NavDropdown>
           </Nav>
           <SearchBox />
+          <IconButton onClick={toggleShowA} style={{ marginLeft: 10 }}>
+            <NotificationsIcon />
+          </IconButton>
+          <Notifications showA={showA} toggleShowA={toggleShowA} />
         </Navbar.Collapse>
       </Container>
     </Navbar>

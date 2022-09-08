@@ -1,0 +1,73 @@
+$color: rgb(165, 165, 165);
+
+.toggler {
+	// position: absolute;
+}
+
+.bubble {
+	position: absolute;
+	bottom: 8%;
+	left: 50%;
+	transform: translateX(-50%);
+	transform-origin: center;
+	color: rgba(70, 70, 70, 0.658);
+	margin: auto;
+	width: auto;
+	display: block;
+	border: 1px solid $color;
+	border-radius: 15px;
+	padding: 0 8px 8px;
+	line-height: 8px;
+	z-index: 98;
+	font-size: 20px;
+	text-align: center;
+	font-weight: bold;
+	font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS", sans-serif;
+	&:hover {
+		cursor: pointer;
+		border: 1px solid darken($color: $color, $amount: 10);
+		transform: translateX(-50%) scale(1.05);
+		transform-origin: center;
+		transition: all 0.2s ease-out;
+	}
+}
+
+@keyframes popup {
+	0% {
+		transform: scale(0.9);
+		// transform: translateY(-50%) scale(0.9);
+		opacity: 0;
+	}
+	30% {
+		// transform: scale(1);
+		opacity: 0.7;
+	}
+	50% {
+		// transform: scale(1.05);
+		opacity: 0.95;
+	}
+	80% {
+		// transform: scale(1.07);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(1);
+		// transform: translateY(-50%) scale(1);
+		opacity: 1;
+	}
+}
+
+.popup-open {
+	width: fit-content;
+	padding: 3px;
+	position: absolute;
+	// top: 50%;
+	left: 10px;
+	bottom: 10%;
+	// transform: translateY(-50%);
+	background-color: rgba(240, 240, 240, 0.87);
+	border: 1px solid $color;
+	border-radius: 10px;
+	z-index: 10;
+	animation: popup 0.5s linear;
+}

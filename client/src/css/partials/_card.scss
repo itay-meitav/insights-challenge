@@ -1,0 +1,26 @@
+$cardBackColor: #fff;
+$cardHeaderBackColor: #f2f2f2;
+
+.card {
+  background-color: $cardBackColor;
+  width: 100%;
+  border: 1px solid darken($color: $cardHeaderBackColor, $amount: 15);
+  border-radius: 5px;
+  .card-header {
+    background-color: $cardHeaderBackColor;
+    padding: 20px;
+    .card-title {
+      font-weight: 400;
+      font-size: xx-large;
+      text-transform: capitalize;
+    }
+    .card-subtitle {
+      opacity: 0.8;
+      text-transform: capitalize;
+    }
+  }
+
+  .card-body {
+    padding: 10px;
+  }
+}

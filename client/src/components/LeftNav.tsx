@@ -58,33 +58,18 @@ function LeftNav() {
                 placement="bottom"
                 overlay={
                   <Tooltip id="button-tooltip-2">
-                    Important note - <br></br>
-                    This action may take several seconds. <br></br>
-                    When finished, the page will refresh.
+                    This action may take up to 2 minutes! When finished, <br />
+                    the page will refresh.
                   </Tooltip>
                 }
               >
                 <NavDropdown.Item
                   onClick={() => {
-                    fetch(config.apiHost + "", {
-                      method: "put",
+                    fetch(config.apiHost + "reload", {
+                      method: "POST",
                     })
                       .then((res) => {
-                        if (res.ok) return res.json();
-                      })
-                      .then(() => {
-                        console.log("reloading");
-                        const href = window.location.href.split(
-                          window.location.host
-                        )[1];
-                        navigate(
-                          href + (location.search ? "&" : "?") + "reload=true"
-                        );
-                        setTimeout(() => {
-                          navigate(href);
-                        });
-                        // window.location.reload(false);
-                        // location.pathname = location.pathname;
+                        if (res.ok) window.location.reload();
                       })
                       .catch((e) => {
                         console.error(e);

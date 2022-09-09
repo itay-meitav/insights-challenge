@@ -18,11 +18,12 @@ $border-color: #222;
   box-sizing: border-box;
 }
 
-html,
+html {
+  min-height: 100vh;
+}
 body {
-  height: 100vh;
-  margin-top: 0;
-  background-image: linear-gradient(#cdd0cb, #e8eae6);
+  height: auto;
+  background: linear-gradient(#cdd0cb, #e8eae6);
 }
 
 #container {

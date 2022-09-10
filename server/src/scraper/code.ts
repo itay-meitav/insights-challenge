@@ -4,6 +4,7 @@ const fs = require("fs");
 const axios = require("axios");
 const cheerio = require("cheerio");
 var HttpProxyAgent = require("http-proxy-agent");
+import { pushDataToDB } from "src/DB";
 
 // HTTP/HTTPS proxy to connect to
 var proxy = process.env.http_proxy || "http://localhost:8118";
@@ -51,7 +52,13 @@ export async function createScrapedFile(location: string) {
       for (let i = 0; i < test.length; i++) {
         test[i].id = i;
       }
+    })
+    .then(async () => {
       await fs.writeFileSync(`${location}data.json`, JSON.stringify(test));
+    })
+    .then(async () => {
+      console.log("pushing the data to DB");
+      await pushDataToDB();
       console.log("done");
     })
     .catch(() => {

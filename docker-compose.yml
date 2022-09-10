@@ -21,7 +21,19 @@ services:
       PORT: 5000
     ports:
       - 5000:5000
+    volumes:
+      - insights-mongodb:/data/db
   tor:
     image: dperson/torproxy:latest
     ports:
       - 8118:9050
+  mongo:
+    image: mongo:latest
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - insights-mongodb:/data/db
+
+volumes:
+  insights-mongodb:

@@ -4,7 +4,7 @@ if (process.env.MODE_ENV != "production") {
 import express from "express";
 import cors from "cors";
 import { createScrapedFile } from "./scraper/code";
-const data = require("./scraper/data.json");
+import { getItems } from "./DB";
 
 const app = express();
 app.use(express.json());
@@ -17,7 +17,8 @@ app.use(
   })
 );
 
-app.get("/posts", (req, res) => {
+app.get("/posts", async (req, res) => {
+  const data = await getItems();
   res.json(data);
 });
 

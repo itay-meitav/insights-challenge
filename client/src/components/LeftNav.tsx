@@ -17,7 +17,7 @@ import Notifications from "./Notifications";
 function LeftNav() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [showA, setShowA] = useState(true);
+  const [showA, setShowA] = useState<boolean>(false);
   const toggleShowA = () => setShowA(!showA);
   return (
     <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
@@ -85,7 +85,7 @@ function LeftNav() {
           <IconButton onClick={toggleShowA} style={{ marginLeft: 10 }}>
             <NotificationsIcon />
           </IconButton>
-          <Notifications showA={showA} toggleShowA={toggleShowA} />
+          <Notifications content={""} showA={showA} toggleShowA={toggleShowA} />
         </Navbar.Collapse>
       </Container>
     </Navbar>

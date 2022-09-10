@@ -6,15 +6,19 @@ import Spinner from "react-bootstrap/Spinner";
 function Index() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loader, setLoader] = useState<boolean>(true);
+
   useEffect(() => {
-    fetch(config.apiHost + "posts").then((res) => {
-      if (res.ok)
-        res.json().then((data) => {
-          setPosts(data);
-        });
-    });
-    setLoader(false);
+    fetchPosts().then(() => setLoader(false));
+    setInterval(() => fetchPosts(), 120 * 1000);
   }, []);
+
+  useEffect(() => {
+    let timer = setTimeout(() => window.location.reload(), 125 * 1000);
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [posts]);
+
   return (
     <div className="index">
       <Spinner
@@ -54,6 +58,15 @@ function Index() {
       </div>
     </div>
   );
+
+  async function fetchPosts() {
+    await fetch(config.apiHost + "posts").then((res) => {
+      if (res.ok)
+        res.json().then((data) => {
+          setPosts(data);
+        });
+    });
+  }
 }
 
 export default Index;

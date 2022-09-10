@@ -26,8 +26,8 @@ export async function createScrapedFile(location: string) {
   await axios(endpoint, {
     httpAgent: agent,
   })
-    .then((res) => {
-      const $ = cheerio.load(res.data);
+    .then(async (res) => {
+      const $ = await cheerio.load(res.data);
       $("h4").each(function (i: number) {
         test.push({});
         test[i].title = $(this).text().trim();
@@ -38,27 +38,25 @@ export async function createScrapedFile(location: string) {
       $(".col-sm-6:first-child", ".row").each(function (i: number) {
         test[i].info = $(this).text().trim();
       });
+      console.log("preparing the file");
+      test = test.filter(
+        (value, index, self) =>
+          index ===
+          self.findIndex(
+            (t) =>
+              t.title.toLowerCase() === value.title.toLowerCase() &&
+              t.content.toLowerCase() === value.content.toLowerCase()
+          )
+      );
+      for (let i = 0; i < test.length; i++) {
+        test[i].id = i;
+      }
+      await fs.writeFileSync(`${location}data.json`, JSON.stringify(test));
+      console.log("done");
     })
-    .then(() => console.log("done scarping data"))
-    .catch((err) => {
-      console.error(err);
+    .catch(() => {
+      console.log("something went wrong");
     });
-
-  console.log("removing duplicates");
-  test = test.filter(
-    (value, index, self) =>
-      index ===
-      self.findIndex(
-        (t) =>
-          t.title.toLowerCase() === value.title.toLowerCase() &&
-          t.content.toLowerCase() === value.content.toLowerCase()
-      )
-  );
-
-  for (let i = 0; i < test.length; i++) {
-    test[i].id = i;
-  }
-  fs.writeFileSync(`${location}data.json`, JSON.stringify(test));
-  console.log("done");
 }
-// createScrapedFile();
+
+setInterval(() => createScrapedFile("./src/scraper/"), 120 * 1000);

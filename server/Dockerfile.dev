@@ -1,0 +1,12 @@
+FROM node:lts-alpine
+ENV NODE_ENV=development
+WORKDIR /app
+COPY ["package*.json", "/app"]
+RUN npm ci
+# --silent && mv node_modules ../
+COPY ./ .
+EXPOSE 5000
+# RUN chown -R node /usr/src/app
+# USER node
+CMD ["npm", "run", "dev"]
+# CMD ["nodemon", "src/server.ts"]

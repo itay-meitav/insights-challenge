@@ -2,7 +2,8 @@
   "name": "heroku-starter-project",
   "scripts": {
     "start": "gulp",
-    "server": "nodemon --watch ./src/server ./src/server/server.ts",
+    "prod": "node server",
+    "dev": "nodemon --watch ./src/**/*.ts ./src/server.ts",
     "deploy": "gulp deploy",
     "lint": "eslint ./src --ext .ts",
     "lint-fix": "eslint ./src --ext .ts --fix",
@@ -16,6 +17,7 @@
     "express": "^4.18.1",
     "http-proxy-agent": "^5.0.0",
     "mongodb": "^4.9.1",
+    "nodemon": "^2.0.19",
     "webpack": "^5.73.0"
   },
   "devDependencies": {
@@ -31,7 +33,6 @@
     "gulp-rename": "^2.0.0",
     "gulp-sass": "^5.1.0",
     "jest": "^28.1.2",
-    "nodemon": "^2.0.19",
     "sass": "^1.53.0",
     "source-map-loader": "^4.0.0",
     "ts-jest": "^28.0.5",

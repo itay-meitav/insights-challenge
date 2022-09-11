@@ -19,11 +19,12 @@ app.use(
 
 app.get("/posts", async (req, res) => {
   const data = await getItems();
+
   res.json(data);
 });
 
 app.post("/reload", async (req, res) => {
-  await createScrapedFile("./src/scraper/");
+  await createScrapedFile();
   res.json({ success: true });
 });
 

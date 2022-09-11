@@ -5,27 +5,24 @@ services:
     image: client
     build:
       context: client
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       # PORT: 5000
     ports:
-      - 3000:3000
-    volumes:
-      - ./client:/app
+      - 3000:5000
   server:
-    image: server_dev
+    image: server
     build:
       context: server
-      dockerfile: ./Dockerfile.dev
+      dockerfile: ./Dockerfile
     environment:
-      NODE_ENV: development
+      NODE_ENV: production
       PORT: 5000
-      MONGO_HOST: mongo
     ports:
       - 5000:5000
     volumes:
-      - ./server:/app
+      - insights-mongodb:/data/db
   tor:
     image: dperson/torproxy:latest
     ports:
@@ -38,5 +35,6 @@ services:
       - 27017:27017
     volumes:
       - insights-mongodb:/data/db
+
 volumes:
   insights-mongodb:

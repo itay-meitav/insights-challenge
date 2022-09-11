@@ -2,21 +2,45 @@ import { useEffect, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import config from "../assets/config";
 import Spinner from "react-bootstrap/Spinner";
+import { useSearchParams } from "react-router-dom";
 
 function Index() {
   const [posts, setPosts] = useState<any[]>([]);
-  const [loader, setLoader] = useState<boolean>(true);
+  const [loader, setLoader] = useState<boolean>(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchValue, setSearchValue] = useState(
+    searchParams.get("search") || ""
+  );
+
+  // useEffect(() => {
+  //   if (searchParams.get("search") == null || !searchParams) {
+  //     fetchPosts().then(() => setLoader(false));
+  //     // let refresh = setInterval(() => fetchPosts(), 120 * 1000);
+  //     // return () => {
+  //     //   clearInterval(refresh);
+  //     // };
+  //   } else {
+  //     return;
+  //   }
+  // }, []);
 
   useEffect(() => {
-    fetchPosts().then(() => setLoader(false));
-    setInterval(() => fetchPosts(), 120 * 1000);
-  }, []);
+    setLoader(true);
+    if (searchParams.get("search") !== null) {
+      fetchPostsSearch(
+        searchParams.get("search")!.toString().toLowerCase()
+      ).then(() => setLoader(false));
+    } else {
+      setLoader(true);
+      fetchPosts().then(() => setLoader(false));
+    }
+  }, [searchParams]);
 
   useEffect(() => {
-    let timer = setTimeout(() => window.location.reload(), 125 * 1000);
-    return () => {
-      clearTimeout(timer);
-    };
+    // let timer = setTimeout(() => window.location.reload(), 125 * 1000);
+    // return () => {
+    //   clearTimeout(timer);
+    // };
   }, [posts]);
 
   return (
@@ -61,6 +85,24 @@ function Index() {
 
   async function fetchPosts() {
     await fetch(config.apiHost + "posts").then((res) => {
+      if (res.ok)
+        res.json().then((data) => {
+          setPosts(data);
+        });
+    });
+  }
+
+  async function fetchPostsSearch(searchKey: string) {
+    await fetch(config.apiHost + "search", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        search: `${searchKey}`,
+      }),
+    }).then((res) => {
       if (res.ok)
         res.json().then((data) => {
           setPosts(data);

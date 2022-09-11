@@ -1,7 +1,6 @@
 import { MongoClient } from "mongodb";
-const fs = require("fs");
 const data = require("../scraper/data.json");
-
+import fs from "fs/promises";
 const HOST = process.env.MONGO_HOST;
 // Connection URL
 const url = `mongodb://${HOST || "127.0.0.1"}:27017`;
@@ -27,9 +26,9 @@ export async function pushDataToDB() {
     const insertResult = await insights.insertMany(data, {
       maxTimeMS: 99999,
     });
-    console.log("Inserted documents =>", insertResult);
+    console.log("Inserted documents to DB");
   } catch (error) {
-    console.log("error inserting data");
+    console.log("error inserting data to DB");
   }
 }
 
@@ -38,8 +37,32 @@ export async function pushDataToDB() {
 export async function getItems() {
   // await connectDB();
   const findResult = await insights.find({}).toArray();
-  console.log("Found documents =>", findResult);
+  console.log("database's content has been sent from DB");
   return findResult;
+}
+export async function getItemsHeading() {
+  // await connectDB();
+  const findResult = await insights
+    .find({}, { projection: { title: 1, _id: 0 } })
+    .toArray();
+
+  console.log("Search options have been sent from DB");
+  return findResult;
+}
+
+export async function searchKey(key: string) {
+  const search = [];
+  const data = await fs.readFile(__dirname + "/../scraper/data.json", "utf8");
+  const parsedData = await JSON.parse(data);
+  console.log(key);
+  for (let i = 0; i < parsedData.length; i++) {
+    const post = parsedData[i].title.toLowerCase();
+    if (post.includes(key)) {
+      search.push(parsedData[i]);
+    }
+  }
+  console.log("Search results have been sent from DB");
+  return search;
 }
 
 export async function disconnectDB() {
@@ -59,7 +82,6 @@ export async function connectDB() {
     console.log("Couldn't connect to db");
   }
 }
-
 //   const DBlocation = "/data/db";
 //   const dirName = require("path").dirname(DBlocation);
 //   if (!fs.existsSync(dirName)) {

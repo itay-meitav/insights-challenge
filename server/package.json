@@ -3,7 +3,7 @@
   "scripts": {
     "start": "gulp",
     "prod": "node server",
-    "dev": "nodemon --watch ./src/**/*.ts ./src/server.ts",
+    "dev": "nodemon --ext ts ./src/server.ts",
     "deploy": "gulp deploy",
     "lint": "eslint ./src --ext .ts",
     "lint-fix": "eslint ./src --ext .ts --fix",

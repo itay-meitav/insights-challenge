@@ -34,7 +34,6 @@ app.get("/search-options", async (req, res) => {
 
 app.post("/search", async (req, res) => {
   const searchValue = req.body.search;
-  console.log(searchValue);
   const data = await searchKey(searchValue);
   res.json(data);
 });

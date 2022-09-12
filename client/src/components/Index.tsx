@@ -8,21 +8,12 @@ function Index() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const [searchValue, setSearchValue] = useState(
-    searchParams.get("search") || ""
-  );
 
-  // useEffect(() => {
-  //   if (searchParams.get("search") == null || !searchParams) {
-  //     fetchPosts().then(() => setLoader(false));
-  //     // let refresh = setInterval(() => fetchPosts(), 120 * 1000);
-  //     // return () => {
-  //     //   clearInterval(refresh);
-  //     // };
-  //   } else {
-  //     return;
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (!searchParams.get("search")) {
+      setTimeout(() => fetchPosts(), 120 * 1000);
+    }
+  }, [posts]);
 
   useEffect(() => {
     setLoader(true);
@@ -35,13 +26,6 @@ function Index() {
       fetchPosts().then(() => setLoader(false));
     }
   }, [searchParams]);
-
-  useEffect(() => {
-    // let timer = setTimeout(() => window.location.reload(), 125 * 1000);
-    // return () => {
-    //   clearTimeout(timer);
-    // };
-  }, [posts]);
 
   return (
     <div className="index">

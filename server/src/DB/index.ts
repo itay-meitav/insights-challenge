@@ -9,7 +9,12 @@ const client = new MongoClient(url);
 const dbName = "insights";
 const db = client.db(dbName);
 const insights = db.collection("insights");
-const connection = connectDB();
+connectDB();
+init();
+
+function init() {
+  insights.createIndex({ title: "text" });
+}
 
 export async function pushDataToDB() {
   // Use connect method to connect to the server
@@ -51,18 +56,21 @@ export async function getItemsHeading() {
 }
 
 export async function searchKey(key: string) {
-  const search = [];
-  const data = await fs.readFile(__dirname + "/../scraper/data.json", "utf8");
-  const parsedData = await JSON.parse(data);
-  console.log(key);
-  for (let i = 0; i < parsedData.length; i++) {
-    const post = parsedData[i].title.toLowerCase();
-    if (post.includes(key)) {
-      search.push(parsedData[i]);
-    }
-  }
+  const res = await insights
+    .find({
+      // $text: {
+      //   $search: key,
+      //   $caseSensitive: false,
+
+      // },
+      title: {
+        $regex: new RegExp(key, "i"),
+      },
+    })
+    .toArray();
   console.log("Search results have been sent from DB");
-  return search;
+
+  return res;
 }
 
 export async function disconnectDB() {

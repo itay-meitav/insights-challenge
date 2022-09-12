@@ -3,7 +3,6 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { createScrapedFile } from "./scraper/code";
 import { getItems, getItemsHeading, searchKey } from "./DB";
 
 const app = express();
@@ -22,10 +21,10 @@ app.get("/posts", async (req, res) => {
   res.json(data);
 });
 
-app.post("/reload", async (req, res) => {
-  await createScrapedFile();
-  res.json({ success: true });
-});
+// app.post("/reload", async (req, res) => {
+//   await createScrapedFile();
+//   res.json({ success: true });
+// });
 
 app.get("/search-options", async (req, res) => {
   const data = await getItemsHeading();

@@ -84,7 +84,7 @@ function Index() {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        search: `${searchKey}`,
+        search: searchKey,
       }),
     }).then((res) => {
       if (res.ok)

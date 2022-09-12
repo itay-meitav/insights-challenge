@@ -14,12 +14,9 @@ init();
 
 function init() {
   insights.createIndex({ title: "text" });
+  // drop();
 }
-
-export async function pushDataToDB() {
-  // Use connect method to connect to the server
-  console.log("inserting");
-
+async function drop() {
   try {
     // await connection;
     await db.dropCollection("insights");
@@ -27,26 +24,25 @@ export async function pushDataToDB() {
   } catch (error) {
     console.error("error deleting collection");
   }
+}
+
+export async function pushDataToDB(posts: any[]) {
   try {
-    const insertResult = await insights.insertMany(data, {
+    const insertResult = await insights.insertMany(posts, {
       maxTimeMS: 99999,
     });
-    console.log("Inserted documents to DB");
+    // console.log(`Inserted ${posts.length} documents to DB`);
   } catch (error) {
     console.log("error inserting data to DB");
   }
 }
 
-// pushDataToDB();
-
 export async function getItems() {
-  // await connectDB();
   const findResult = await insights.find({}).toArray();
   console.log("database's content has been sent from DB");
   return findResult;
 }
 export async function getItemsHeading() {
-  // await connectDB();
   const findResult = await insights
     .find({}, { projection: { title: 1, _id: 0 } })
     .toArray();
@@ -58,11 +54,6 @@ export async function getItemsHeading() {
 export async function searchKey(key: string) {
   const res = await insights
     .find({
-      // $text: {
-      //   $search: key,
-      //   $caseSensitive: false,
-
-      // },
       title: {
         $regex: new RegExp(key, "i"),
       },
@@ -90,8 +81,3 @@ export async function connectDB() {
     console.log("Couldn't connect to db");
   }
 }
-//   const DBlocation = "/data/db";
-//   const dirName = require("path").dirname(DBlocation);
-//   if (!fs.existsSync(dirName)) {
-//     fs.mkdirSync(dirName, { recursive: true });
-//   }

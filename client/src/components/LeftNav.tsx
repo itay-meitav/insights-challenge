@@ -3,20 +3,17 @@ import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
 import config from "../assets/config";
 import { IconButton } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
-import Toast from "react-bootstrap/Toast";
-import ToastContainer from "react-bootstrap/ToastContainer";
 import { useState } from "react";
 import Notifications from "./Notifications";
 
 function LeftNav() {
-  const location = useLocation();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [showA, setShowA] = useState<boolean>(false);
   const toggleShowA = () => setShowA(!showA);
   return (
@@ -37,22 +34,42 @@ function LeftNav() {
         <Navbar.Toggle aria-controls="responsive-navbar-nav" />
         <Navbar.Collapse id="responsive-navbar-nav">
           <Nav className="me-auto">
-            {/* <Nav.Item>
-              <Link to="/" className="nav-link">
-              </Link>
-            </Nav.Item> */}
             <NavDropdown
               style={{ transition: "all 2s linear" }}
               title="Tools"
               id="collasible-nav-dropdown"
             >
-              <NavDropdown.Item
-                as={Link}
-                to={"/"}
-                style={{ color: "inherit", textDecoration: "inherit" }}
+              <NavDropdown
+                style={{ transition: "all 2s linear" }}
+                title="Filters..."
+                drop={"end"}
+                id="dropdown-menu-align-end"
               >
-                Add New Post
-              </NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    searchParams.set("orderBy", "title");
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  By title
+                </NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    searchParams.set("orderBy", "author");
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  By author's name
+                </NavDropdown.Item>
+                <NavDropdown.Item
+                  onClick={() => {
+                    searchParams.set("orderBy", "date");
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  By date posted
+                </NavDropdown.Item>
+              </NavDropdown>
               <NavDropdown.Divider />
               <OverlayTrigger
                 placement="bottom"

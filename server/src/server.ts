@@ -3,7 +3,7 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { countDocsDB, getPostsHeading, getPosts, searchKey } from "./DB";
+import { countDocs, getPostsHeading, getPosts, getSearchPost } from "./DB";
 
 const app = express();
 app.use(express.json());
@@ -20,10 +20,15 @@ app.get("/posts", async (req, res) => {
   const limit = Number(req.query.limit) || 20;
   const offset = Number(req.query.offset) || 0;
   const search = (req.query.search as string) || undefined;
-  const count = await countDocsDB();
-  const posts = await getPosts(limit, offset);
+  const orderBy = req.query.orderBy
+    ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
+    : "date";
+  const count = await countDocs();
   const pages = Math.ceil(count / limit);
-  const searchFromDB = await searchKey(limit, offset, search);
+  const posts = await getPosts(limit, offset, orderBy);
+  const searchFromDB = await getSearchPost(limit, offset, orderBy, search);
+  console.log(count);
+
   res.json({
     posts,
     pages,

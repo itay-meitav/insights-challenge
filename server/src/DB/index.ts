@@ -56,13 +56,10 @@ export async function checkForDuplicatesDB(title: string, content: string) {
   return false;
 }
 
-export async function searchKey(limit: number, offset: number, key: string) {
+export async function getPosts(limit: number, offset: number, sortBy: string) {
   const res = await insights
-    .find({
-      title: {
-        $regex: new RegExp(key, "i"),
-      },
-    })
+    .find({})
+    .sort(sortBy, -1)
     .skip(offset)
     .limit(limit)
     .toArray();
@@ -70,19 +67,29 @@ export async function searchKey(limit: number, offset: number, key: string) {
   return res;
 }
 
-export async function countDocsDB() {
-  const count = await insights.countDocuments({});
-  return count;
-}
-
-export async function getPosts(limit: number, offset: number) {
-  const PaginatedPosts = await insights
-    .find({})
-    .sort({ date: -1 })
+export async function getSearchPost(
+  limit: number,
+  offset: number,
+  sortBy: string,
+  searchKey: string
+) {
+  const res = await insights
+    .find({
+      title: {
+        $regex: new RegExp(searchKey, "i"),
+      },
+    })
+    .sort(sortBy, -1)
     .skip(offset)
     .limit(limit)
     .toArray();
-  return PaginatedPosts;
+  console.log("Search results have been sent from DB");
+  return res;
+}
+
+export async function countDocs() {
+  const count = await insights.countDocuments({});
+  return count;
 }
 
 export async function disconnectDB() {

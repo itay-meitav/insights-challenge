@@ -8,6 +8,7 @@ import { Pagination } from "@mui/material";
 interface IOptions {
   limit: number;
   offset: number;
+  orderBy?: string;
   search?: string;
 }
 
@@ -28,12 +29,13 @@ const getPosts = async (options: IOptions) => {
   const response = await fetch(url);
   if (response.ok) {
     const data = await response.json();
-    if (data.success) return data as { posts: any[]; pages: number };
+    if (data.success)
+      return data as { posts: any[]; pages: number; searchFromDB: any[] };
     else {
-      return { posts: [], pages: 0 };
+      return { posts: [], pages: 0, searchFromDB: [] };
     }
   } else {
-    return { posts: [], pages: 0 };
+    return { posts: [], pages: 0, searchFromDB: [] };
   }
 };
 
@@ -47,26 +49,32 @@ function Index() {
   const [pages, setPages] = useState(0);
 
   useEffect(() => {
-    const limit = 20;
-    const offset = (page - 1) * limit;
-    if (!searchParams.get("search")) {
-      setTimeout(() => getPosts({ limit: limit, offset: offset }), 120 * 1000);
-    }
+    // const limit = 20;
+    // const offset = (page - 1) * limit;
+    // if (!searchParams.get("search")) {
+    //   setTimeout(() => getPosts({ limit: limit, offset: offset }), 120 * 1000);
+    // }
   }, [posts]);
 
   useEffect(() => {
     const page = Number(searchParams.get("page")) || 1;
     setPage(page);
     const search = searchParams.get("search") || undefined;
+    const orderBy = searchParams.get("orderBy") || undefined;
     const limit = 20;
     const offset = (page - 1) * limit;
 
     // set fetch options
     const options: IOptions = { limit: limit, offset: offset };
     search && (options.search = search.toString().toLowerCase());
+    orderBy && (options.orderBy = orderBy.toLowerCase());
 
     getPosts(options).then((data) => {
-      setPosts(data.posts);
+      if (data.posts.length >= 0) {
+        setPosts(data.searchFromDB);
+      } else {
+        setPosts(data.posts);
+      }
       setPages(data.pages);
       setLoader(false);
     });

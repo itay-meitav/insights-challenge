@@ -1,6 +1,4 @@
 import { MongoClient } from "mongodb";
-const data = require("../scraper/data.json");
-import fs from "fs/promises";
 const HOST = process.env.MONGO_HOST;
 // Connection URL
 const url = `mongodb://${HOST || "127.0.0.1"}:27017`;
@@ -16,7 +14,8 @@ function init() {
   insights.createIndex({ title: "text" });
   // drop();
 }
-async function drop() {
+
+export async function drop() {
   try {
     // await connection;
     await db.dropCollection("insights");
@@ -28,7 +27,7 @@ async function drop() {
 
 export async function pushDataToDB(posts: any[]) {
   try {
-    const insertResult = await insights.insertMany(posts, {
+    await insights.insertMany(posts, {
       maxTimeMS: 99999,
     });
     // console.log(`Inserted ${posts.length} documents to DB`);
@@ -37,12 +36,7 @@ export async function pushDataToDB(posts: any[]) {
   }
 }
 
-export async function getItems() {
-  const findResult = await insights.find({}).toArray();
-  console.log("database's content has been sent from DB");
-  return findResult;
-}
-export async function getItemsHeading() {
+export async function getPostsHeading() {
   const findResult = await insights
     .find({}, { projection: { title: 1, _id: 0 } })
     .toArray();
@@ -51,17 +45,44 @@ export async function getItemsHeading() {
   return findResult;
 }
 
-export async function searchKey(key: string) {
+export async function checkForDuplicatesDB(title: string, content: string) {
+  const findResult = await insights.count({
+    title,
+    content,
+  });
+  if (findResult > 0) {
+    return true;
+  }
+  return false;
+}
+
+export async function searchKey(limit: number, offset: number, key: string) {
   const res = await insights
     .find({
       title: {
         $regex: new RegExp(key, "i"),
       },
     })
+    .skip(offset)
+    .limit(limit)
     .toArray();
   console.log("Search results have been sent from DB");
-
   return res;
+}
+
+export async function countDocsDB() {
+  const count = await insights.countDocuments({});
+  return count;
+}
+
+export async function getPosts(limit: number, offset: number) {
+  const PaginatedPosts = await insights
+    .find({})
+    .sort({ date: -1 })
+    .skip(offset)
+    .limit(limit)
+    .toArray();
+  return PaginatedPosts;
 }
 
 export async function disconnectDB() {

@@ -3,28 +3,73 @@ import Accordion from "react-bootstrap/Accordion";
 import config from "../assets/config";
 import Spinner from "react-bootstrap/Spinner";
 import { useSearchParams } from "react-router-dom";
+import { Pagination } from "@mui/material";
+
+interface IOptions {
+  limit: number;
+  offset: number;
+  search?: string;
+}
+
+const formatDate = (date: string) => {
+  let hours;
+  let year;
+  let arr = date.split("T");
+  hours = arr[1].split(".").slice(0, 1).toString();
+  year = arr[0].split("-");
+  year = `${year[2]}/${year[1]}/${year[0]}`;
+  let fixedDate = `on ${year}, at ${hours}`;
+  return fixedDate;
+};
+
+const getPosts = async (options: IOptions) => {
+  const searchParams = new URLSearchParams(Object.entries(options));
+  const url = `${config.apiHost}posts?${searchParams.toString()}`;
+  const response = await fetch(url);
+  if (response.ok) {
+    const data = await response.json();
+    if (data.success) return data as { posts: any[]; pages: number };
+    else {
+      return { posts: [], pages: 0 };
+    }
+  } else {
+    return { posts: [], pages: 0 };
+  }
+};
 
 function Index() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
   const [searchParams, setSearchParams] = useSearchParams();
+  const [page, setPage] = useState<number>(
+    Number(searchParams.get("page")) || 1
+  );
+  const [pages, setPages] = useState(0);
 
   useEffect(() => {
+    const limit = 20;
+    const offset = (page - 1) * limit;
     if (!searchParams.get("search")) {
-      setTimeout(() => fetchPosts(), 120 * 1000);
+      setTimeout(() => getPosts({ limit: limit, offset: offset }), 120 * 1000);
     }
   }, [posts]);
 
   useEffect(() => {
-    setLoader(true);
-    if (searchParams.get("search") !== null) {
-      fetchPostsSearch(
-        searchParams.get("search")!.toString().toLowerCase()
-      ).then(() => setLoader(false));
-    } else {
-      setLoader(true);
-      fetchPosts().then(() => setLoader(false));
-    }
+    const page = Number(searchParams.get("page")) || 1;
+    setPage(page);
+    const search = searchParams.get("search") || undefined;
+    const limit = 20;
+    const offset = (page - 1) * limit;
+
+    // set fetch options
+    const options: IOptions = { limit: limit, offset: offset };
+    search && (options.search = search.toString().toLowerCase());
+
+    getPosts(options).then((data) => {
+      setPosts(data.posts);
+      setPages(data.pages);
+      setLoader(false);
+    });
   }, [searchParams]);
 
   return (
@@ -43,9 +88,9 @@ function Index() {
           className="list"
           style={!loader ? { visibility: "visible" } : { visibility: "hidden" }}
         >
-          {posts.map((element) => {
+          {posts.map((element, i) => {
             return (
-              <Accordion.Item key={element.id} eventKey={element.id}>
+              <Accordion.Item key={i} eventKey={i.toString()}>
                 <Accordion.Header style={{ position: "relative" }}>
                   {element.title}
                   <div
@@ -55,7 +100,7 @@ function Index() {
                       fontSize: 12,
                     }}
                   >
-                    {element.info}
+                    By {element.author},{formatDate(element.date)}
                   </div>
                 </Accordion.Header>
                 <Accordion.Body>{element.content}</Accordion.Body>
@@ -64,35 +109,19 @@ function Index() {
           })}
         </Accordion>
       </div>
+      <div className="pagination">
+        <Pagination
+          count={pages}
+          page={page}
+          onChange={(e, value: number) => {
+            setPage(value);
+            searchParams.set("page", value + "");
+            setSearchParams(searchParams);
+          }}
+        />
+      </div>
     </div>
   );
-
-  async function fetchPosts() {
-    await fetch(config.apiHost + "posts").then((res) => {
-      if (res.ok)
-        res.json().then((data) => {
-          setPosts(data);
-        });
-    });
-  }
-
-  async function fetchPostsSearch(searchKey: string) {
-    await fetch(config.apiHost + "search", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        search: searchKey,
-      }),
-    }).then((res) => {
-      if (res.ok)
-        res.json().then((data) => {
-          setPosts(data);
-        });
-    });
-  }
 }
 
 export default Index;

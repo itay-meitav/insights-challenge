@@ -89,6 +89,7 @@ function SearchBox() {
                 height: "fit-content",
                 maxHeight: 200,
                 overflowY: "auto",
+                overflowX: "hidden",
                 display:
                   searchValue.length > 0 && showOptions == true
                     ? "unset"

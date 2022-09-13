@@ -3,7 +3,7 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { getItems, getItemsHeading, searchKey } from "./DB";
+import { countDocsDB, getPostsHeading, getPosts, searchKey } from "./DB";
 
 const app = express();
 app.use(express.json());
@@ -17,23 +17,23 @@ app.use(
 );
 
 app.get("/posts", async (req, res) => {
-  const data = await getItems();
-  res.json(data);
+  const limit = Number(req.query.limit) || 20;
+  const offset = Number(req.query.offset) || 0;
+  const search = (req.query.search as string) || undefined;
+  const count = await countDocsDB();
+  const posts = await getPosts(limit, offset);
+  const pages = Math.ceil(count / limit);
+  const searchFromDB = await searchKey(limit, offset, search);
+  res.json({
+    posts,
+    pages,
+    searchFromDB,
+    success: true,
+  });
 });
-
-// app.post("/reload", async (req, res) => {
-//   await createScrapedFile();
-//   res.json({ success: true });
-// });
 
 app.get("/search-options", async (req, res) => {
-  const data = await getItemsHeading();
-  res.json(data);
-});
-
-app.post("/search", async (req, res) => {
-  const searchValue = req.body.search;
-  const data = await searchKey(searchValue);
+  const data = await getPostsHeading();
   res.json(data);
 });
 

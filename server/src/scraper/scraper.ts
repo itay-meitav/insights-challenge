@@ -1,7 +1,7 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import HttpProxyAgent from "http-proxy-agent";
-import { pushDataToDB } from "../DB";
+import { checkForDuplicatesDB, pushDataToDB } from "../DB";
 import * as chrono from "chrono-node";
 
 // HTTP/HTTPS proxy to connect to
@@ -62,7 +62,7 @@ export default class Scraper {
           const res = await this.getHTML(link);
           if (!res.success) return {};
           const post = this.scrapPost(res.html);
-          this.savePost([post]);
+          this.checkAndUploadToDB(post);
           return post;
         })
       );
@@ -107,17 +107,28 @@ export default class Scraper {
     return author;
   }
 
-  savePost(posts: TPost[]) {
-    pushDataToDB(posts);
+  removeDuplicates(posts: TPost[]) {
+    const filteredPosts = posts.filter(
+      (value, index, self) =>
+        index ===
+        self.findIndex(
+          (t) =>
+            t.title.toLowerCase() === value.title.toLowerCase() &&
+            t.content.toLowerCase() === value.content.toLowerCase()
+        )
+    );
+    return filteredPosts;
+  }
+
+  async savePostsInDB(posts: TPost[]) {
+    await pushDataToDB(posts);
+  }
+
+  async checkAndUploadToDB(post: TPost) {
+    const test = await checkForDuplicatesDB(post.title, post.content);
+    if (!test) {
+      this.savePostsInDB([post]);
+    }
+    return false;
   }
 }
-
-// posts.filter(
-//     (value, index, self) =>
-//       index ===
-//       self.findIndex(
-//         (t) =>
-//           t.title.toLowerCase() === value.title.toLowerCase() &&
-//           t.content.toLowerCase() === value.content.toLowerCase()
-//       )
-//   );

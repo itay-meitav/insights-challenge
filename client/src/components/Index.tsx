@@ -70,11 +70,7 @@ function Index() {
     orderBy && (options.orderBy = orderBy.toLowerCase());
 
     getPosts(options).then((data) => {
-      if (data.posts.length >= 0) {
-        setPosts(data.searchFromDB);
-      } else {
-        setPosts(data.posts);
-      }
+      setPosts(data.posts);
       setPages(data.pages);
       setLoader(false);
     });

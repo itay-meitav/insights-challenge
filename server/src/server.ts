@@ -3,7 +3,7 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { countDocs, getPostsHeading, getPosts, getSearchPost } from "./DB";
+import { getPostsHeading, getPosts } from "./DB";
 
 const app = express();
 app.use(express.json());
@@ -23,16 +23,16 @@ app.get("/posts", async (req, res) => {
   const orderBy = req.query.orderBy
     ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
     : "date";
-  const count = await countDocs();
-  const pages = Math.ceil(count / limit);
-  const posts = await getPosts(limit, offset, orderBy);
-  const searchFromDB = await getSearchPost(limit, offset, orderBy, search);
-  console.log(count);
 
+  const postsReq = search
+    ? await getPosts(limit, offset, orderBy, search)
+    : await getPosts(limit, offset, orderBy);
+  const posts = postsReq.posts;
+  const count = await postsReq.count;
+  const pages = Math.ceil(count / limit);
   res.json({
     posts,
     pages,
-    searchFromDB,
     success: true,
   });
 });

@@ -1,4 +1,4 @@
-import { MongoClient } from "mongodb";
+import { Document, Filter, MongoClient } from "mongodb";
 const HOST = process.env.MONGO_HOST;
 // Connection URL
 const url = `mongodb://${HOST || "127.0.0.1"}:27017`;
@@ -56,40 +56,28 @@ export async function checkForDuplicatesDB(title: string, content: string) {
   return false;
 }
 
-export async function getPosts(limit: number, offset: number, sortBy: string) {
-  const res = await insights
-    .find({})
-    .sort(sortBy, -1)
-    .skip(offset)
-    .limit(limit)
-    .toArray();
-  console.log("Search results have been sent from DB");
-  return res;
-}
-
-export async function getSearchPost(
+export async function getPosts(
   limit: number,
   offset: number,
   sortBy: string,
-  searchKey: string
+  searchKey?: string
 ) {
+  const findOptions: Filter<Document> = {};
+  if (searchKey)
+    findOptions.title = {
+      $regex: new RegExp(searchKey, "i"),
+    };
   const res = await insights
-    .find({
-      title: {
-        $regex: new RegExp(searchKey, "i"),
-      },
-    })
+    .find(findOptions)
     .sort(sortBy, -1)
     .skip(offset)
     .limit(limit)
     .toArray();
-  console.log("Search results have been sent from DB");
-  return res;
-}
 
-export async function countDocs() {
-  const count = await insights.countDocuments({});
-  return count;
+  const count = insights.countDocuments(findOptions);
+
+  console.log("Search results have been sent from DB");
+  return { posts: res, count: count };
 }
 
 export async function disconnectDB() {

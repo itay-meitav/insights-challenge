@@ -5,7 +5,7 @@ import { checkForDuplicatesDB, pushDataToDB } from "../DB";
 import * as chrono from "chrono-node";
 
 // HTTP/HTTPS proxy to connect to
-const proxy = process.env.http_proxy || "http://localhost:8118";
+const proxy = process.env.HTTP_PROXY || "http://127.0.0.1:8118";
 const url =
   "http://paste2vljvhmwq5zy33re2hzu4fisgqsohufgbljqomib2brzx3q4mid.onion/lists/";
 
@@ -35,8 +35,10 @@ export default class Scraper {
       });
       return { success: true, html: res.data };
     } catch (error) {
-      console.log("failed to fetch data at page " + this.page);
+      console.log(error);
 
+      console.log("failed to fetch data at page " + this.page);
+      // console.log(error);
       return { success: false };
     }
   }
@@ -58,16 +60,17 @@ export default class Scraper {
     if (res.success) {
       const links = this.getLinks(res.html);
       const posts = await Promise.all(
-        links.map(async (link) => {
+        links.map(async (link): Promise<TPost> => {
           const res = await this.getHTML(link);
-          if (!res.success) return {};
+          if (!res.success) return {} as TPost;
           const post = this.scrapPost(res.html);
           this.checkAndUploadToDB(post);
-          return post;
+          return post as TPost;
         })
       );
-      return posts;
+      return posts.filter((x) => x.content);
     }
+    return [] as TPost[];
   }
 
   scrapPost(html: string) {

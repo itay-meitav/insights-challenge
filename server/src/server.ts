@@ -4,6 +4,7 @@ if (process.env.MODE_ENV != "production") {
 import express from "express";
 import cors from "cors";
 import { getPostsHeading, getPosts } from "./DB";
+import { scrapLastPage } from "./scraper";
 
 const app = express();
 app.use(express.json());
@@ -34,6 +35,14 @@ app.get("/posts", async (req, res) => {
     posts,
     pages,
     success: true,
+  });
+});
+
+app.get("/new", async (req, res) => {
+  return await scrapLastPage().then((result) => {
+    return res.json({
+      success: result,
+    });
   });
 });
 

@@ -71,6 +71,7 @@ function SearchBox() {
           <Dropdown.Toggle variant="input" bsPrefix="p-0">
             <Form.Control
               type="search"
+              disabled={window.location.pathname !== "/" ? true : false}
               placeholder="Search"
               className="me-1"
               aria-label="Search"
@@ -119,6 +120,7 @@ function SearchBox() {
         </Dropdown>
         <Button
           type="submit"
+          disabled={window.location.pathname !== "/" ? true : false}
           onClick={(e) => {
             e.preventDefault();
             // setSubmit(!submit);

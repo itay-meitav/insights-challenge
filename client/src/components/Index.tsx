@@ -39,6 +39,13 @@ const getPosts = async (options: IOptions) => {
   }
 };
 
+const askForNewPosts = async () => {
+  const url = `${config.apiHost}new`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.success;
+};
+
 function Index() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loader, setLoader] = useState<boolean>(false);
@@ -49,11 +56,16 @@ function Index() {
   const [pages, setPages] = useState(0);
 
   useEffect(() => {
-    // const limit = 20;
-    // const offset = (page - 1) * limit;
-    // if (!searchParams.get("search")) {
-    //   setTimeout(() => getPosts({ limit: limit, offset: offset }), 120 * 1000);
-    // }
+    const limit = 20;
+    const offset = (page - 1) * limit;
+    if (!searchParams.get("search")) {
+      setTimeout(() => {
+        askForNewPosts().then((data) => {
+          if (data.success) getPosts({ limit: limit, offset: offset });
+          return false;
+        });
+      }, 120 * 1000);
+    }
   }, [posts]);
 
   useEffect(() => {

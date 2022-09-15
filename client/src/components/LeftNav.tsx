@@ -1,4 +1,4 @@
-import { Tooltip } from "react-bootstrap";
+import { NavbarBrand, NavItem, Tooltip } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -11,6 +11,7 @@ import { IconButton } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useState } from "react";
 import Notifications from "./Notifications";
+const logo = require("../assets/logo.png");
 
 function LeftNav() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,13 +22,13 @@ function LeftNav() {
       <Container>
         <Navbar.Brand>
           <Link to="/" className="nav-link">
-            {/* <img
+            <img
               src={logo}
               width="24"
-              height="30"
+              height="26"
               className="d-inline-block align-top"
               style={{ marginRight: 10 }}
-            /> */}
+            />
             Posts Panel
           </Link>
         </Navbar.Brand>
@@ -38,6 +39,7 @@ function LeftNav() {
               style={{ transition: "all 2s linear" }}
               title="Tools"
               id="collasible-nav-dropdown"
+              disabled={window.location.pathname !== "/" ? true : false}
             >
               <NavDropdown
                 style={{ transition: "all 2s linear" }}
@@ -75,16 +77,14 @@ function LeftNav() {
                 placement="bottom"
                 overlay={
                   <Tooltip id="button-tooltip-2">
-                    This action may take up to 2 minutes! When finished, <br />
+                    This action may take a few seconds. When finished, <br />
                     the page will refresh.
                   </Tooltip>
                 }
               >
                 <NavDropdown.Item
                   onClick={() => {
-                    fetch(config.apiHost + "reload", {
-                      method: "POST",
-                    })
+                    fetch(config.apiHost + "new")
                       .then((res) => {
                         if (res.ok) window.location.reload();
                       })
@@ -97,6 +97,11 @@ function LeftNav() {
                 </NavDropdown.Item>
               </OverlayTrigger>
             </NavDropdown>
+            <Nav.Item>
+              <Link to="/statistics" className="nav-link">
+                Statistics
+              </Link>
+            </Nav.Item>
           </Nav>
           <SearchBox />
           <IconButton onClick={toggleShowA} style={{ marginLeft: 10 }}>

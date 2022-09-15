@@ -80,6 +80,11 @@ export async function getPosts(
   return { posts: res, count: count };
 }
 
+export async function getLastDBItem() {
+  const last = await insights.find().sort({ date: -1 }).limit(1).toArray();
+  return last[0];
+}
+
 export async function disconnectDB() {
   try {
     await client.close();

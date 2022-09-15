@@ -1,3 +1,4 @@
+import { getLastDBItem } from "../DB/index";
 import Scraper from "./scraper";
 
 async function scrapAll() {
@@ -25,4 +26,24 @@ async function scrapAll() {
   }
   console.log("done");
 }
-scrapAll();
+
+export async function scrapLastPage() {
+  try {
+    const lastDBItem = await getLastDBItem();
+    let page = 1;
+    let posts: any = [];
+    while (
+      page < 2 &&
+      !posts.find(
+        (x) => x.title === lastDBItem.title && x.content === lastDBItem.content
+      )
+    ) {
+      posts = await Scraper.scrap(page);
+      page++;
+    }
+    return true;
+  } catch (error) {
+    console.log("error scrapping page");
+    return false;
+  }
+}

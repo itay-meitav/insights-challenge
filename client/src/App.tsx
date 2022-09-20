@@ -5,6 +5,7 @@ import Template from "./components/Template";
 import Index from "./components/Index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Statistics from "./components/Statistics";
+import Keywords from "./components/Keywords";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/statistics" element={<Statistics />} />
+          <Route path="/keywords" element={<Keywords />} />
         </Routes>
       </Template>
     </Router>

@@ -20,6 +20,7 @@
     "http-proxy-agent": "^5.0.0",
     "mongodb": "^4.9.1",
     "nodemon": "^2.0.19",
+    "sentiment": "^5.0.2",
     "webpack": "^5.73.0"
   },
   "devDependencies": {

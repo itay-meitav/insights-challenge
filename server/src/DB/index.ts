@@ -7,6 +7,7 @@ const client = new MongoClient(url);
 const dbName = "insights";
 const db = client.db(dbName);
 const insights = db.collection("insights");
+const keywords = db.collection("keywords");
 connectDB();
 init();
 
@@ -85,13 +86,9 @@ export async function getLastDBItem() {
   return last[0];
 }
 
-export async function disconnectDB() {
-  try {
-    await client.close();
-    console.log("disconnected successfully from db");
-  } catch {
-    console.log("Couldn't disconnected from db");
-  }
+export async function getKeywords() {
+  const keywordsArr = await keywords.find({}).toArray();
+  return keywordsArr;
 }
 
 export async function connectDB() {

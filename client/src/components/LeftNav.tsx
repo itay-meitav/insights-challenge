@@ -102,6 +102,11 @@ function LeftNav() {
                 Statistics
               </Link>
             </Nav.Item>
+            <Nav.Item>
+              <Link to="/keywords" className="nav-link">
+                Keywords
+              </Link>
+            </Nav.Item>
           </Nav>
           <SearchBox />
           <IconButton onClick={toggleShowA} style={{ marginLeft: 10 }}>

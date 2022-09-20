@@ -3,7 +3,7 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { getPostsHeading, getPosts } from "./DB";
+import { getPostsHeading, getPosts, getKeywords } from "./DB";
 import { scrapLastPage } from "./scraper";
 
 const app = express();
@@ -48,6 +48,11 @@ app.get("/new", async (req, res) => {
 
 app.get("/search-options", async (req, res) => {
   const data = await getPostsHeading();
+  res.json(data);
+});
+
+app.get("/keywords", async (req, res) => {
+  const data = await getKeywords();
   res.json(data);
 });
 

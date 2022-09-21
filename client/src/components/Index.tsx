@@ -10,6 +10,7 @@ interface IOptions {
   offset: number;
   orderBy?: string;
   search?: string;
+  keywords?: string;
 }
 
 const formatDate = (date: string) => {
@@ -29,13 +30,9 @@ const getPosts = async (options: IOptions) => {
   const response = await fetch(url);
   if (response.ok) {
     const data = await response.json();
-    if (data.success)
-      return data as { posts: any[]; pages: number; searchFromDB: any[] };
-    else {
-      return { posts: [], pages: 0, searchFromDB: [] };
-    }
+    return data as { posts: any[]; pages: number };
   } else {
-    return { posts: [], pages: 0, searchFromDB: [] };
+    return { posts: [], pages: 0 };
   }
 };
 
@@ -72,6 +69,7 @@ function Index() {
     const page = Number(searchParams.get("page")) || 1;
     setPage(page);
     const search = searchParams.get("search") || undefined;
+    const keywords = searchParams.get("keywords") || undefined;
     const orderBy = searchParams.get("orderBy") || undefined;
     const limit = 20;
     const offset = (page - 1) * limit;
@@ -80,6 +78,7 @@ function Index() {
     const options: IOptions = { limit: limit, offset: offset };
     search && (options.search = search.toString().toLowerCase());
     orderBy && (options.orderBy = orderBy.toLowerCase());
+    keywords && (options.keywords = keywords.toString().toLowerCase());
 
     getPosts(options).then((data) => {
       setPosts(data.posts);

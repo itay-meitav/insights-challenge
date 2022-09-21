@@ -21,21 +21,27 @@ app.get("/posts", async (req, res) => {
   const limit = Number(req.query.limit) || 20;
   const offset = Number(req.query.offset) || 0;
   const search = (req.query.search as string) || undefined;
+  const keywords = (req.query.keywords as string) || undefined;
   const orderBy = req.query.orderBy
     ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
     : "date";
 
-  const postsReq = search
-    ? await getPosts(limit, offset, orderBy, search)
-    : await getPosts(limit, offset, orderBy);
-  const posts = postsReq.posts;
-  const count = await postsReq.count;
-  const pages = Math.ceil(count / limit);
-  res.json({
-    posts,
-    pages,
-    success: true,
-  });
+  if (search) {
+    const postsReq = await getPosts(limit, offset, orderBy, search);
+    await answerFromServer(postsReq, limit, res);
+  } else if (keywords) {
+    const postsReq = await getPosts(
+      limit,
+      offset,
+      orderBy,
+      undefined,
+      keywords
+    );
+    await answerFromServer(postsReq, limit, res);
+  } else {
+    const postsReq = await getPosts(limit, offset, orderBy);
+    await answerFromServer(postsReq, limit, res);
+  }
 });
 
 app.get("/new", async (req, res) => {
@@ -71,3 +77,14 @@ const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
+
+async function answerFromServer(postsReq: any, limit: number, res: any) {
+  const posts = postsReq.posts;
+  const count = await postsReq.count;
+  const pages = Math.ceil(count / limit);
+  res.json({
+    posts,
+    pages,
+    success: true,
+  });
+}

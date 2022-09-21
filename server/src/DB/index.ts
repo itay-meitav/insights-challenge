@@ -61,23 +61,41 @@ export async function getPosts(
   limit: number,
   offset: number,
   sortBy: string,
-  searchKey?: string
+  searchKey?: string,
+  keywords?: string
 ) {
   const findOptions: Filter<Document> = {};
-  if (searchKey)
+  const findKeywords: Filter<Document> = {};
+
+  function findDoc() {
+    if (searchKey) return findOptions;
+    if (keywords) return findKeywords;
+    if (!searchKey && !keywords) return {};
+  }
+
+  if (searchKey) {
     findOptions.title = {
       $regex: new RegExp(searchKey, "i"),
     };
+  }
+
+  if (keywords) {
+    const keywords = await getKeywords();
+    let regex = keywords.join("|");
+    findKeywords.title = {
+      $regex: new RegExp(regex, "i"),
+    };
+  }
+
   const res = await insights
-    .find(findOptions)
+    .find(findDoc())
     .sort(sortBy, -1)
     .skip(offset)
     .limit(limit)
     .toArray();
 
-  const count = insights.countDocuments(findOptions);
-
-  console.log("Search results have been sent from DB");
+  const count = insights.countDocuments(findDoc());
+  console.log("posts results have been sent from DB");
   return { posts: res, count: count };
 }
 
@@ -88,7 +106,7 @@ export async function getLastDBItem() {
 
 export async function getKeywords() {
   const keywordsArr = await keywords.find({}).toArray();
-  return keywordsArr;
+  return keywordsArr.map((x) => x.keyword);
 }
 
 export async function pushKeywords(arr: any[]) {

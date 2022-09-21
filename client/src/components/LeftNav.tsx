@@ -71,6 +71,17 @@ function LeftNav() {
                 >
                   By date posted
                 </NavDropdown.Item>
+                <NavDropdown.Divider />
+                <NavDropdown.Item
+                  onClick={() => {
+                    // searchParams.get("search")
+                    searchParams.delete("search");
+                    searchParams.set("keywords", "true");
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  By keywords
+                </NavDropdown.Item>
               </NavDropdown>
               <NavDropdown.Divider />
               <OverlayTrigger

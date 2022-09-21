@@ -13,7 +13,7 @@ async function getKeywords() {
   const data = await fetch(`${config.apiHost}keywords`).then((res) =>
     res.json()
   );
-  return data.map((x: any) => x.keyword);
+  return data;
 }
 
 async function changeKeywords(keywords: string[]) {
@@ -33,7 +33,6 @@ function Keywords() {
   const [keywords, setKeywords] = useState<string[]>([]);
   const [marked, setMarked] = useState<string[]>([]);
   const [disabled, setDisabled] = useState<number[]>([]);
-  const [deleteMarked, setDeleteMarked] = useState<boolean>(false);
   const [changed, setChanged] = useState<boolean>(false);
   const [changedContent, setChangedContent] = useState<string>("");
   const [listLength, setListLength] = useState<number>(0);
@@ -49,8 +48,6 @@ function Keywords() {
       });
     })();
   }, []);
-
-  // useEffect(() => {}, [keywords]);
 
   return (
     <div className="keywords">
@@ -163,10 +160,6 @@ function Keywords() {
         <Button
           variant="danger"
           onClick={async () => {
-            setDeleteMarked(true);
-            setTimeout(() => {
-              setDeleteMarked(false);
-            }, 1000);
             const arr = keywords.filter((el) => !marked.includes(el));
             const data = await changeKeywords(arr);
             if (data.success) {

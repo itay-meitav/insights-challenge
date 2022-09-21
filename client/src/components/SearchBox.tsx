@@ -31,7 +31,10 @@ function SearchBox() {
       next = keys.next();
     }
     const value = typeof val == "string" ? val : searchValue;
-    if (value) searchParams.set("search", value);
+    if (value) {
+      searchParams.delete("keywords");
+      searchParams.set("search", value);
+    }
     setSearchParams(searchParams);
   };
 

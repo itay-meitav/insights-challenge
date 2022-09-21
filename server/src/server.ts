@@ -3,7 +3,7 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { getPostsHeading, getPosts, getKeywords } from "./DB";
+import { getPostsHeading, getPosts, getKeywords, pushKeywords } from "./DB";
 import { scrapLastPage } from "./scraper";
 
 const app = express();
@@ -54,6 +54,17 @@ app.get("/search-options", async (req, res) => {
 app.get("/keywords", async (req, res) => {
   const data = await getKeywords();
   res.json(data);
+});
+
+app.post("/keywords", async (req, res) => {
+  try {
+    const data = req.body;
+    await pushKeywords(data);
+    res.json({ success: true });
+  } catch (error) {
+    console.log(error);
+    res.json({ success: false });
+  }
 });
 
 const port = process.env.PORT || 5000;

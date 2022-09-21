@@ -16,13 +16,13 @@ function init() {
   // drop();
 }
 
-export async function drop() {
+export async function dropC(collection: string) {
   try {
     // await connection;
-    await db.dropCollection("insights");
-    console.log("collection dropped");
+    await db.dropCollection(collection);
+    console.log(`${collection} collection dropped`);
   } catch (error) {
-    console.error("error deleting collection");
+    console.error(`error deleting ${collection} collection`);
   }
 }
 
@@ -89,6 +89,18 @@ export async function getLastDBItem() {
 export async function getKeywords() {
   const keywordsArr = await keywords.find({}).toArray();
   return keywordsArr;
+}
+
+export async function pushKeywords(arr: any[]) {
+  if (arr.length)
+    await dropC("keywords").then(() => {
+      keywords.insertMany(arr, {
+        maxTimeMS: 99999,
+      });
+    });
+  else {
+    console.log("array is empty");
+  }
 }
 
 export async function connectDB() {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Button,
   Dropdown,
@@ -13,27 +13,44 @@ async function getKeywords() {
   const data = await fetch(`${config.apiHost}keywords`).then((res) =>
     res.json()
   );
-  return data.map((x: any) => x.word);
+  return data.map((x: any) => x.keyword);
+}
+
+async function changeKeywords(keywords: string[]) {
+  return await fetch(`${config.apiHost}keywords`, {
+    method: "POST",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(keywords.map((x) => ({ keyword: x }))),
+  }).then(async (res) => {
+    return await res.json();
+  });
 }
 
 function Keywords() {
   const [keywords, setKeywords] = useState<string[]>([]);
-  const [marked, setMarked] = useState<number[]>([]);
+  const [marked, setMarked] = useState<string[]>([]);
   const [disabled, setDisabled] = useState<number[]>([]);
   const [deleteMarked, setDeleteMarked] = useState<boolean>(false);
+  const [changed, setChanged] = useState<boolean>(false);
+  const [changedContent, setChangedContent] = useState<string>("");
+  const [listLength, setListLength] = useState<number>(0);
+  const value = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
     (async () => {
       const list = await getKeywords();
+      setListLength(list.length);
       setKeywords(list);
+      (list as string[]).forEach((e, i) => {
+        setDisabled((x) => [...x, i]);
+      });
     })();
   }, []);
 
-  useEffect(() => {
-    keywords.forEach((e, i) => {
-      setDisabled((x) => [...x, i]);
-    });
-  }, [keywords]);
+  // useEffect(() => {}, [keywords]);
 
   return (
     <div className="keywords">
@@ -41,14 +58,7 @@ function Keywords() {
       <ListGroup className="list">
         {keywords.map((x, i) => {
           return (
-            <div
-              key={i}
-              style={
-                marked.includes(i) && deleteMarked
-                  ? { display: "none" }
-                  : { display: "unset" }
-              }
-            >
+            <div key={i}>
               <InputGroup className="mb-3">
                 <DropdownButton
                   id="dropdown-button-drop-start"
@@ -69,11 +79,15 @@ function Keywords() {
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item
-                    onClick={(e) => {
+                    onClick={async (e) => {
                       const el =
                         e.currentTarget.parentElement!.parentElement!
                           .parentElement!;
                       el.remove();
+                      const arr = keywords.filter(
+                        (el) => el !== value.current?.value
+                      );
+                      await changeKeywords(arr);
                     }}
                   >
                     Delete
@@ -81,17 +95,28 @@ function Keywords() {
                 </DropdownButton>
                 <InputGroup.Checkbox
                   onChange={() => {
-                    if (marked.includes(i)) {
-                      setMarked(marked.filter((x) => x !== i));
+                    if (marked.includes(x)) {
+                      setMarked(marked.filter((el) => el !== x));
                     } else {
-                      setMarked([...marked, i]);
+                      setMarked([...marked, x]);
                     }
                   }}
                 />
                 <Form.Control
-                  disabled={disabled.includes(i) ? true : false}
+                  ref={value}
+                  disabled={
+                    disabled.includes(i) && i < listLength ? true : false
+                  }
                   value={x}
-                  onChange={() => {}}
+                  onChange={(e) => {
+                    const val = e.currentTarget.value;
+                    setKeywords(
+                      keywords.map((x, j) => {
+                        if (j === i) x = val;
+                        return x;
+                      })
+                    );
+                  }}
                 />
               </InputGroup>
             </div>
@@ -99,16 +124,70 @@ function Keywords() {
         })}
       </ListGroup>
       <div className="buttons">
-        <Button variant="success">Save Changes</Button>
+        <Button
+          variant="success"
+          onClick={async () => {
+            const arr = keywords.filter((x) => x !== "");
+            const data = await changeKeywords(arr);
+            if (data.success) {
+              setChanged(true);
+              setChangedContent("Changes were saved successfully");
+              setTimeout(() => {
+                setChanged(false);
+                setChangedContent("");
+              }, 3000);
+              keywords.forEach((e, i) => {
+                setDisabled((x) => [...x, i]);
+              });
+              setListLength(arr.length);
+            } else {
+              setChanged(true);
+              setChangedContent("Changes were not saved");
+              setTimeout(() => {
+                setChanged(false);
+                setChangedContent("");
+              }, 3000);
+            }
+          }}
+        >
+          Save Changes
+        </Button>
+        <Button
+          variant="primary"
+          onClick={() => {
+            setKeywords([...keywords, ""]);
+          }}
+        >
+          Add a word
+        </Button>
         <Button
           variant="danger"
-          onClick={() => {
+          onClick={async () => {
             setDeleteMarked(true);
+            setTimeout(() => {
+              setDeleteMarked(false);
+            }, 1000);
+            const arr = keywords.filter((el) => !marked.includes(el));
+            const data = await changeKeywords(arr);
+            if (data.success) {
+              setChanged(true);
+              setKeywords(arr);
+              setListLength(arr.length);
+            } else {
+              setChanged(true);
+              setChangedContent("failed to remove");
+              setTimeout(() => {
+                setChanged(false);
+                setChangedContent("");
+              }, 1000);
+            }
+            setMarked([]);
           }}
         >
           Delete All Selected
         </Button>
       </div>
+      {changed ? <h6 style={{ marginTop: 30 }}>{changedContent}</h6> : ""}
     </div>
   );
 }

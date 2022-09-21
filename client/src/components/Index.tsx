@@ -45,7 +45,7 @@ const askForNewPosts = async () => {
 
 function Index() {
   const [posts, setPosts] = useState<any[]>([]);
-  const [loader, setLoader] = useState<boolean>(false);
+  const [loader, setLoader] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState<number>(
     Number(searchParams.get("page")) || 1

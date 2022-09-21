@@ -7,8 +7,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
 import config from "../assets/config";
-import { IconButton } from "@mui/material";
-import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useState } from "react";
 import Notifications from "./Notifications";
 const logo = require("../assets/logo.png");
@@ -118,11 +116,13 @@ function LeftNav() {
                 Keywords
               </Link>
             </Nav.Item>
+            <Nav.Item>
+              <Link to="/alerts" className="nav-link">
+                Alerts
+              </Link>
+            </Nav.Item>
           </Nav>
           <SearchBox />
-          <IconButton onClick={toggleShowA} style={{ marginLeft: 10 }}>
-            <NotificationsIcon />
-          </IconButton>
           <Notifications content={""} showA={showA} toggleShowA={toggleShowA} />
         </Navbar.Collapse>
       </Container>

@@ -5,6 +5,7 @@ import {
   DropdownButton,
   Form,
   InputGroup,
+  Spinner,
 } from "react-bootstrap";
 import ListGroup from "react-bootstrap/ListGroup";
 import config from "../assets/config";
@@ -37,11 +38,13 @@ function Keywords() {
   const [changedContent, setChangedContent] = useState<string>("");
   const [listLength, setListLength] = useState<number>(0);
   const value = useRef<HTMLInputElement | null>(null);
+  const [loader, setLoader] = useState<boolean>(true);
 
   useEffect(() => {
     (async () => {
       const list = await getKeywords();
       setListLength(list.length);
+      setLoader(false);
       setKeywords(list);
       (list as string[]).forEach((e, i) => {
         setDisabled((x) => [...x, i]);
@@ -51,6 +54,14 @@ function Keywords() {
 
   return (
     <div className="keywords">
+      <Spinner
+        animation="border"
+        role="status"
+        style={!loader ? { display: "none" } : { display: "unset" }}
+        className="spinner"
+      >
+        <span className="visually-hidden">Loading...</span>
+      </Spinner>
       <h5 style={{ marginBottom: 30 }}>Keywords List</h5>
       <ListGroup className="list">
         {keywords.map((x, i) => {

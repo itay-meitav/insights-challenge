@@ -6,6 +6,7 @@ import Index from "./components/Index";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Statistics from "./components/Statistics";
 import Keywords from "./components/Keywords";
+import Alerts from "./components/Alerts";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/" element={<Index />} />
           <Route path="/statistics" element={<Statistics />} />
           <Route path="/keywords" element={<Keywords />} />
+          <Route path="/alerts" element={<Alerts />} />
         </Routes>
       </Template>
     </Router>

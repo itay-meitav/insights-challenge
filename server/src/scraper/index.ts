@@ -1,4 +1,5 @@
-import { getLastDBItem } from "../DB/index";
+import { getKeywords, getLastDBItem, pushAlert } from "../DB/index";
+import * as chrono from "chrono-node";
 import Scraper from "./scraper";
 
 async function scrapAll() {
@@ -28,10 +29,12 @@ async function scrapAll() {
 }
 
 export async function scrapLastPage() {
+  const keywords = await getKeywords();
   try {
     const lastDBItem = await getLastDBItem();
     let page = 1;
     let posts: any = [];
+    let j = 0;
     while (
       page < 2 &&
       !posts.find(
@@ -39,11 +42,32 @@ export async function scrapLastPage() {
       )
     ) {
       posts = await Scraper.scrap(page);
+      if (j < 1 && posts.some((x) => keywords.includes(x))) {
+        pushAlert({
+          alert: "Some of your keywords were found in the last posts update",
+          date: formatDateAlert(chrono.parseDate("now").toString()),
+        });
+        j++;
+      }
       page++;
     }
+    pushAlert({
+      alert: "Data collection from a source completed successfully",
+      date: formatDateAlert(chrono.parseDate("now").toString()),
+    });
     return true;
   } catch (error) {
     console.log("error scrapping page");
+    pushAlert({
+      alert: "Data collection from a source has failed",
+      date: formatDateAlert(chrono.parseDate("now").toString()),
+    });
     return false;
   }
+}
+
+function formatDateAlert(date: string) {
+  let arr = date.split(" ");
+  let partialDate = `${arr[0]} ${arr[1]} ${arr[2]} ${arr[4]}`;
+  return partialDate;
 }

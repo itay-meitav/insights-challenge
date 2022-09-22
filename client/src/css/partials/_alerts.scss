@@ -4,17 +4,11 @@
   justify-content: center;
   flex-direction: column;
   margin-top: 80px;
-  margin-bottom: 50px;
   .list {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column;
-    width: 50%;
-    margin-bottom: 20px;
+    width: 950px;
+    margin-bottom: 50px;
   }
-
-  .list-item {
-    width: 100%;
+  .pagination {
+    margin-bottom: 60px;
   }
 }

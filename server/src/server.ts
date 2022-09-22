@@ -3,7 +3,14 @@ if (process.env.MODE_ENV != "production") {
 }
 import express from "express";
 import cors from "cors";
-import { getPostsHeading, getPosts, getKeywords, pushKeywords } from "./DB";
+import {
+  getPostsHeading,
+  getPosts,
+  getKeywords,
+  pushKeywords,
+  pushAlert,
+  getAlerts,
+} from "./DB";
 import { scrapLastPage } from "./scraper";
 
 const app = express();
@@ -73,17 +80,27 @@ app.post("/keywords", async (req, res) => {
   }
 });
 
+app.get("/alerts", async (req, res) => {
+  const limit = Number(req.query.limit) || 20;
+  const offset = Number(req.query.offset) || 0;
+  const orderBy = req.query.orderBy
+    ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
+    : "date";
+  const data = await getAlerts(limit, offset, orderBy);
+  await answerFromServer(data, limit, res);
+});
+
 const port = process.env.PORT || 5000;
 app.listen(port, () => {
   console.log(`listening on port ${port}`);
 });
 
 async function answerFromServer(postsReq: any, limit: number, res: any) {
-  const posts = postsReq.posts;
+  const documents = postsReq.documents;
   const count = await postsReq.count;
   const pages = Math.ceil(count / limit);
   res.json({
-    posts,
+    documents,
     pages,
     success: true,
   });

@@ -24,17 +24,17 @@ const formatDate = (date: string) => {
   return fixedDate;
 };
 
-const getPosts = async (options: IOptions) => {
+async function getPosts(options: IOptions) {
   const searchParams = new URLSearchParams(Object.entries(options));
   const url = `${config.apiHost}posts?${searchParams.toString()}`;
   const response = await fetch(url);
   if (response.ok) {
     const data = await response.json();
-    return data as { posts: any[]; pages: number };
+    return data as { documents: any[]; pages: number };
   } else {
-    return { posts: [], pages: 0 };
+    return { documents: [], pages: 0 };
   }
-};
+}
 
 const askForNewPosts = async () => {
   const url = `${config.apiHost}new`;
@@ -81,7 +81,7 @@ function Index() {
     keywords && (options.keywords = keywords.toString().toLowerCase());
 
     getPosts(options).then((data) => {
-      setPosts(data.posts);
+      setPosts(data.documents);
       setPages(data.pages);
       setLoader(false);
     });
@@ -126,6 +126,7 @@ function Index() {
       </div>
       <div className="pagination">
         <Pagination
+          style={loader ? { display: "none" } : { display: "unset" }}
           count={pages}
           page={page}
           onChange={(e, value: number) => {

@@ -8,6 +8,7 @@ const dbName = "insights";
 const db = client.db(dbName);
 const insights = db.collection("insights");
 const keywords = db.collection("keywords");
+const alerts = db.collection("alerts");
 connectDB();
 init();
 
@@ -96,7 +97,7 @@ export async function getPosts(
 
   const count = insights.countDocuments(findDoc());
   console.log("posts results have been sent from DB");
-  return { posts: res, count: count };
+  return { documents: res, count: count };
 }
 
 export async function getLastDBItem() {
@@ -118,6 +119,29 @@ export async function pushKeywords(arr: any[]) {
     });
   else {
     console.log("array is empty");
+  }
+}
+
+export async function getAlerts(limit: number, offset: number, sortBy: string) {
+  const res = await alerts
+    .find({})
+    .sort(sortBy, -1)
+    .skip(offset)
+    .limit(limit)
+    .toArray();
+
+  const count = alerts.countDocuments({});
+  console.log("alerts results have been sent from DB");
+  return { documents: res, count: count };
+}
+
+export async function pushAlert(alert: { alert: string; date: string }) {
+  if (alert)
+    alerts.insertOne(alert, {
+      maxTimeMS: 99999,
+    });
+  else {
+    console.log("alert is empty");
   }
 }
 

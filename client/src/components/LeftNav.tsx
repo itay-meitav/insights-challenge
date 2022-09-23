@@ -7,14 +7,17 @@ import { Link, useSearchParams } from "react-router-dom";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
 import config from "../assets/config";
-import { useState } from "react";
+import { createContext, useState } from "react";
 import Notifications from "./Notifications";
-const logo = require("../assets/logo.png");
+var logo = require("../assets/logo.png");
+
+export const NotificationsContext = createContext("");
 
 function LeftNav() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [showA, setShowA] = useState<boolean>(false);
-  const toggleShowA = () => setShowA(!showA);
+  const orderBy = searchParams.get("orderBy");
+
   return (
     <Navbar collapseOnSelect expand="lg" bg="light" variant="light">
       <Container>
@@ -37,7 +40,11 @@ function LeftNav() {
               style={{ transition: "all 2s linear" }}
               title="Tools"
               id="collasible-nav-dropdown"
-              disabled={window.location.pathname !== "/" ? true : false}
+              disabled={
+                ["/", "/alerts"].includes(window.location.pathname)
+                  ? false
+                  : true
+              }
             >
               <NavDropdown
                 style={{ transition: "all 2s linear" }}
@@ -50,6 +57,9 @@ function LeftNav() {
                     searchParams.set("orderBy", "title");
                     setSearchParams(searchParams);
                   }}
+                  disabled={
+                    ["/"].includes(window.location.pathname) ? false : true
+                  }
                 >
                   By title
                 </NavDropdown.Item>
@@ -58,13 +68,26 @@ function LeftNav() {
                     searchParams.set("orderBy", "author");
                     setSearchParams(searchParams);
                   }}
+                  disabled={
+                    ["/"].includes(window.location.pathname) ? false : true
+                  }
                 >
                   By author's name
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   onClick={() => {
-                    searchParams.set("orderBy", "date");
-                    setSearchParams(searchParams);
+                    if (["/alerts"].includes(window.location.pathname)) {
+                      if (orderBy == "1") {
+                        searchParams.set("orderBy", "-1");
+                        setSearchParams(searchParams);
+                      } else {
+                        searchParams.set("orderBy", "1");
+                        setSearchParams(searchParams);
+                      }
+                    } else {
+                      searchParams.set("orderBy", "date");
+                      setSearchParams(searchParams);
+                    }
                   }}
                 >
                   By date posted
@@ -77,6 +100,9 @@ function LeftNav() {
                     searchParams.set("keywords", "true");
                     setSearchParams(searchParams);
                   }}
+                  disabled={
+                    ["/"].includes(window.location.pathname) ? false : true
+                  }
                 >
                   By keywords
                 </NavDropdown.Item>
@@ -101,6 +127,9 @@ function LeftNav() {
                         console.error(e);
                       });
                   }}
+                  disabled={
+                    ["/"].includes(window.location.pathname) ? false : true
+                  }
                 >
                   Refresh Data
                 </NavDropdown.Item>
@@ -123,7 +152,6 @@ function LeftNav() {
             </Nav.Item>
           </Nav>
           <SearchBox />
-          <Notifications content={""} showA={showA} toggleShowA={toggleShowA} />
         </Navbar.Collapse>
       </Container>
     </Navbar>

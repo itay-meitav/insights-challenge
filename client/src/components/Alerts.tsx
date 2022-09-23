@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { createContext, useEffect, useState } from "react";
 import { ListGroup, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import config from "../assets/config";
+import { formatDate } from "./Index";
+import Notifications from "./Notifications";
 
 interface IOptions {
   limit: number;
@@ -39,8 +41,11 @@ function Alerts() {
     const offset = (page - 1) * limit;
 
     // set fetch options
-    const options: IOptions = { limit: limit, offset: offset };
-    orderBy && (options.orderBy = orderBy.toLowerCase());
+    const options: IOptions = {
+      limit: limit,
+      offset: offset,
+      orderBy: orderBy,
+    };
 
     getAlerts(options).then((data) => {
       setAlerts(data.documents);
@@ -49,8 +54,15 @@ function Alerts() {
     });
   }, [searchParams]);
 
+  // useEffect(() => {
+  //   (()=> {
+  //     return
+  //   })();
+  // }, [alerts]);
+
   return (
     <div className="alerts">
+      <Notifications date={"2 min ago"} body={"hello"} />
       <Spinner
         animation="border"
         role="status"
@@ -76,7 +88,7 @@ function Alerts() {
                   fontSize: 12,
                 }}
               >
-                - {element.date}
+                - {formatDate(element.date.toString())}
               </div>
             </ListGroup.Item>
           );

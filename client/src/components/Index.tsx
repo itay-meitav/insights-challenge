@@ -13,7 +13,7 @@ interface IOptions {
   keywords?: string;
 }
 
-const formatDate = (date: string) => {
+export function formatDate(date: string) {
   let hours;
   let year;
   let arr = date.split("T");
@@ -22,7 +22,7 @@ const formatDate = (date: string) => {
   year = `${year[2]}/${year[1]}/${year[0]}`;
   let fixedDate = `on ${year}, at ${hours}`;
   return fixedDate;
-};
+}
 
 async function getPosts(options: IOptions) {
   const searchParams = new URLSearchParams(Object.entries(options));

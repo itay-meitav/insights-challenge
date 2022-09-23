@@ -45,7 +45,7 @@ export async function scrapLastPage() {
       if (j < 1 && posts.some((x) => keywords.includes(x))) {
         pushAlert({
           alert: "Some of your keywords were found in the last posts update",
-          date: formatDateAlert(chrono.parseDate("now").toString()),
+          date: chrono.parseDate("now"),
         });
         j++;
       }
@@ -53,21 +53,15 @@ export async function scrapLastPage() {
     }
     pushAlert({
       alert: "Data collection from a source completed successfully",
-      date: formatDateAlert(chrono.parseDate("now").toString()),
+      date: chrono.parseDate("now"),
     });
     return true;
   } catch (error) {
     console.log("error scrapping page");
     pushAlert({
       alert: "Data collection from a source has failed",
-      date: formatDateAlert(chrono.parseDate("now").toString()),
+      date: chrono.parseDate("now"),
     });
     return false;
   }
-}
-
-function formatDateAlert(date: string) {
-  let arr = date.split(" ");
-  let partialDate = `${arr[0]} ${arr[1]} ${arr[2]} ${arr[4]}`;
-  return partialDate;
 }

@@ -83,10 +83,8 @@ app.post("/keywords", async (req, res) => {
 app.get("/alerts", async (req, res) => {
   const limit = Number(req.query.limit) || 20;
   const offset = Number(req.query.offset) || 0;
-  const orderBy = req.query.orderBy
-    ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
-    : "date";
-  const data = await getAlerts(limit, offset, orderBy);
+  const orderBy = req.query.orderBy as string;
+  const data = await getAlerts(limit, offset, parseInt(orderBy) > 0 ? 1 : -1);
   await answerFromServer(data, limit, res);
 });
 

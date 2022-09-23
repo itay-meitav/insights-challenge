@@ -1,20 +1,27 @@
 import Toast from "react-bootstrap/Toast";
-import ToastContainer from "react-bootstrap/ToastContainer";
-type toast = {
-  showA: boolean;
-  toggleShowA: () => void;
-  content: string;
+import ToastContainer, { ToastPosition } from "react-bootstrap/ToastContainer";
+import { createContext, useState } from "react";
+
+type Tnotify = {
+  date: string;
+  body: string;
 };
 
-function Notifications(props: toast) {
+function Notifications(props: Tnotify) {
+  const [position, setPosition] = useState<ToastPosition | undefined>(
+    "top-end"
+  );
+  const [showNotification, setShowNotification] = useState(true);
+  const toggleShowNotification = () => setShowNotification(!showNotification);
+
   return (
-    <ToastContainer className="p-3" position={"top-end"}>
-      <Toast show={props.showA} onClose={props.toggleShowA}>
-        <Toast.Header>
+    <ToastContainer className="p-3" position={position}>
+      <Toast show={showNotification} onClose={toggleShowNotification}>
+        <Toast.Header closeButton={true}>
           <strong className="me-auto">System</strong>
-          <small className="text-muted">just now</small>
+          <small>{props.date}</small>
         </Toast.Header>
-        <Toast.Body>{props.content}</Toast.Body>
+        <Toast.Body>{props.body}</Toast.Body>
       </Toast>
     </ToastContainer>
   );

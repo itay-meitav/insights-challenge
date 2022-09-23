@@ -122,10 +122,14 @@ export async function pushKeywords(arr: any[]) {
   }
 }
 
-export async function getAlerts(limit: number, offset: number, sortBy: string) {
+export async function getAlerts(
+  limit: number,
+  offset: number,
+  orderBy: 1 | -1
+) {
   const res = await alerts
     .find({})
-    .sort(sortBy, -1)
+    .sort("date", orderBy)
     .skip(offset)
     .limit(limit)
     .toArray();
@@ -135,7 +139,7 @@ export async function getAlerts(limit: number, offset: number, sortBy: string) {
   return { documents: res, count: count };
 }
 
-export async function pushAlert(alert: { alert: string; date: string }) {
+export async function pushAlert(alert: { alert: string; date: Date }) {
   if (alert)
     alerts.insertOne(alert, {
       maxTimeMS: 99999,

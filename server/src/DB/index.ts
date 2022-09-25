@@ -139,6 +139,11 @@ export async function getAlerts(
   return { documents: res, count: count };
 }
 
+export async function getLastAlert() {
+  const last = await alerts.find().sort({ date: -1 }).limit(1).toArray();
+  return last[0];
+}
+
 export async function pushAlert(alert: { alert: string; date: Date }) {
   if (alert)
     alerts.insertOne(alert, {

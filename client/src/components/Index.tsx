@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Accordion from "react-bootstrap/Accordion";
 import config from "../assets/config";
 import Spinner from "react-bootstrap/Spinner";
 import { useSearchParams } from "react-router-dom";
 import { Pagination } from "@mui/material";
+import { useToast } from "./ToastContainer";
+import { getAlerts, getLastAlert } from "./Alerts";
 
 interface IOptions {
   limit: number;
@@ -44,6 +46,7 @@ const askForNewPosts = async () => {
 };
 
 function Index() {
+  const [alerts, setAlerts] = useState<any[]>([]);
   const [posts, setPosts] = useState<any[]>([]);
   const [loader, setLoader] = useState<boolean>(true);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -51,6 +54,27 @@ function Index() {
     Number(searchParams.get("page")) || 1
   );
   const [pages, setPages] = useState(0);
+  const addToast = useContext(useToast);
+  let alert = alerts.at(0);
+
+  useEffect(() => {
+    const options: IOptions = {
+      limit: 20,
+      offset: 0,
+    };
+    getAlerts(options).then((data) => {
+      setAlerts(data.documents);
+    });
+    setInterval(async () => {
+      const lastAlert = await getLastAlert();
+      if (alert.date !== lastAlert.date) {
+        addToast({
+          body: alert.alert,
+          date: formatDate(alert.date),
+        });
+      }
+    }, 20 * 1000);
+  }, []);
 
   useEffect(() => {
     const limit = 20;

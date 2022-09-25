@@ -10,6 +10,7 @@ import {
   pushKeywords,
   pushAlert,
   getAlerts,
+  getLastAlert,
 } from "./DB";
 import { scrapLastPage } from "./scraper";
 
@@ -86,6 +87,11 @@ app.get("/alerts", async (req, res) => {
   const orderBy = req.query.orderBy as string;
   const data = await getAlerts(limit, offset, parseInt(orderBy) > 0 ? 1 : -1);
   await answerFromServer(data, limit, res);
+});
+
+app.get("/alerts/last", async (req, res) => {
+  const last = await getLastAlert();
+  res.json(last);
 });
 
 const port = process.env.PORT || 5000;

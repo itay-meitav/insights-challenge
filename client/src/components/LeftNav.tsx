@@ -1,4 +1,4 @@
-import { NavbarBrand, NavItem, Tooltip } from "react-bootstrap";
+import { Tooltip } from "react-bootstrap";
 import Container from "react-bootstrap/Container";
 import Nav from "react-bootstrap/Nav";
 import Navbar from "react-bootstrap/Navbar";
@@ -8,7 +8,6 @@ import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import SearchBox from "./SearchBox";
 import config from "../assets/config";
 import { createContext, useState } from "react";
-import Notifications from "./Notifications";
 var logo = require("../assets/logo.png");
 
 export const NotificationsContext = createContext("");

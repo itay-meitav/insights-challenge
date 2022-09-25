@@ -1,10 +1,9 @@
-import React, { createContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ListGroup, Spinner } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 import { Pagination } from "@mui/material";
 import config from "../assets/config";
 import { formatDate } from "./Index";
-import Notifications from "./Notifications";
 
 interface IOptions {
   limit: number;
@@ -12,7 +11,7 @@ interface IOptions {
   orderBy?: string;
 }
 
-async function getAlerts(options: IOptions) {
+export async function getAlerts(options: IOptions) {
   const searchParams = new URLSearchParams(Object.entries(options));
   const url = `${config.apiHost}alerts?${searchParams.toString()}`;
   const response = await fetch(url);
@@ -22,6 +21,12 @@ async function getAlerts(options: IOptions) {
   } else {
     return { documents: [], pages: 0 };
   }
+}
+
+export async function getLastAlert() {
+  const response = await fetch(`${config.apiHost}alerts/last`);
+  const lastAlert = await response.json();
+  return lastAlert;
 }
 
 function Alerts() {
@@ -54,15 +59,8 @@ function Alerts() {
     });
   }, [searchParams]);
 
-  // useEffect(() => {
-  //   (()=> {
-  //     return
-  //   })();
-  // }, [alerts]);
-
   return (
     <div className="alerts">
-      <Notifications date={"2 min ago"} body={"hello"} />
       <Spinner
         animation="border"
         role="status"

@@ -11,7 +11,7 @@ The data should be analyzed and saved in a database, and then be presented in a 
 - **[TypeScript](https://www.typescriptlang.org/)**
 - **[Sass](https://www.npmjs.com/package/sass)**
 - **[Express](https://www.npmjs.com/package/express)**
-- **[Mongodb](https://www.npmjs.com/package/mongodb)**
+- **[MongoDB](https://www.mongodb.com/)**
 
 ## Packages:
 
@@ -21,7 +21,8 @@ The data should be analyzed and saved in a database, and then be presented in a 
   - **[React-Bootstrap](https://www.npmjs.com/package/react-bootstrap)** - For design purposes.
 
 - **Back-end**:
-  - **[Http-proxy-agent](https://www.npmjs.com/package/http-proxy-agent)** - For the ability to create requests through the container that provides
+  - **[Node-MongoDB](https://www.npmjs.com/package/mongodb)** - For DB management.
+  - **[Http-Proxy-Agent](https://www.npmjs.com/package/http-proxy-agent)** - For the ability to create requests through the container that provides
   us vpn to the dark web.
   - **[Cheerio](https://www.npmjs.com/package/cheerio)** - For scarping the data.
   - **[Webpack](https://www.npmjs.com/package/webpack)** - For modules bundling and build the server side.

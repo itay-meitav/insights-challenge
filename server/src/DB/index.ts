@@ -1,11 +1,9 @@
 import { Document, Filter, MongoClient } from "mongodb";
+
 const HOST = process.env.MONGO_HOST;
-// Connection URL
 const url = `mongodb://${HOST || "127.0.0.1"}:27017`;
 const client = new MongoClient(url);
-// Database Name
-const dbName = "insights";
-const db = client.db(dbName);
+const db = client.db("insights");
 const insights = db.collection("insights");
 const keywords = db.collection("keywords");
 const alerts = db.collection("alerts");
@@ -158,7 +156,8 @@ export async function connectDB() {
   try {
     await client.connect();
     console.log("Connected successfully to db");
-  } catch {
+  } catch (e) {
+    console.log(e);
     console.log("Couldn't connect to db");
   }
 }

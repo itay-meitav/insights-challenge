@@ -1,21 +1,17 @@
 const gulp = require("gulp");
 const clean = require("gulp-clean");
-const { exec, execSync, execFile } = require("child_process");
-
-const { task } = require("gulp");
+const { exec } = require("child_process");
 
 function execLog(command = "", cb = undefined) {
   const process = exec(command, cb);
   process.stdout.on("data", console.log);
   process.stdout.on("error", console.log);
-  process.stderr.on("data", console.log);
-  process.stderr.on("error", console.log);
 }
 
 // Removes previous dist
 gulp.task("start", () => {
   return gulp
-    .src("./dist", {
+    .src(["./dist"], {
       allowEmpty: true,
     })
     .pipe(clean());
@@ -70,26 +66,8 @@ gulp.task("copy-dist-to-deploy", () => {
 
 gulp.task("copy-node-to-deploy", () => {
   return gulp
-    .src([
-      "./package.json",
-      "./package-lock.json",
-      "./.gitignore",
-      "./.env",
-      "./Procfile",
-    ])
+    .src(["./package.json", "./package-lock.json", "./.gitignore"])
     .pipe(gulp.dest("./deploy"));
-});
-
-task("deploy-heruku", (cb) => {
-  execSync("chmod +x deploy.sh");
-  const deploy = execFile("./deploy.sh", (err) => {
-    console.log(err);
-    cb();
-  });
-  deploy.stdout.on("data", console.log);
-  deploy.stdout.on("error", console.log);
-  deploy.stderr.on("data", console.log);
-  deploy.stderr.on("error", console.log);
 });
 
 gulp.task("build", gulp.series("start", "static", "tsc"));
@@ -107,7 +85,6 @@ gulp.task(
     "clean-deploy",
     "copy-dist-to-deploy",
     "copy-node-to-deploy",
-    // "react",
-    "deploy-heruku"
+    "react"
   )
 );

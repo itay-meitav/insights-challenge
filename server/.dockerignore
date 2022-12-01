@@ -10,6 +10,7 @@
 **/.vscode
 **/*.*proj.user
 **/*.dbmdl
+**/.eslintrc.json
 **/*.jfm
 **/charts
 **/docker-compose*
@@ -21,3 +22,4 @@
 **/secrets.dev.yaml
 **/values.dev.yaml
 README.md
+

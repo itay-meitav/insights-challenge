@@ -1,0 +1,28 @@
+{
+  "name": "insights-challenge",
+  "version": "1.0.0",
+  "description": "This project was collaborated with Rapid7, as part of the Cyber4s program by Scale-Up Velocity.",
+  "main": "index.js",
+  "scripts": {
+    "i-server": "cd ./server && npm ci",
+    "i-client": "cd ./client && npm ci",
+    "init-p": "npm run i-server && npm run i-client",
+    "server": "cd ./server && npm run start",
+    "client": "cd ./client && npm run start",
+    "test-server": "cd ./server && npm run test",
+    "test-client": " cd ./client && npm run test",
+    "build": "cd ./server && npm run deploy",
+    "prod": "cd ./server/deploy && node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/itay-meitav/insights-challenge.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/itay-meitav/insights-challenge/issues"
+  },
+  "homepage": "https://github.com/itay-meitav/insights-challenge#readme"
+}

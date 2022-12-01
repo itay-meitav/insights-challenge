@@ -2,25 +2,24 @@ version: "3.4"
 
 services:
   client:
-    image: client
+    container_name: client
     build:
-      context: client
-      dockerfile: ./Dockerfile.dev
+      context: ./client
+      dockerfile: ./Dockerfile
+      target: build
     environment:
       NODE_ENV: development
-      # PORT: 5000
     ports:
       - 3000:3000
     volumes:
       - ./client:/app
   server:
-    image: server_dev
+    container_name: server
     build:
-      context: server
-      dockerfile: ./Dockerfile.dev
+      context: ./server
+      dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
-      PORT: 5000
       MONGO_HOST: mongo
       HTTP_PROXY: http://tor:8118
     ports:
@@ -28,12 +27,14 @@ services:
     volumes:
       - ./server:/app
   tor:
+    container_name: tor
     image: dperson/torproxy:latest
     ports:
       - 8118:8118
       - 9050:9050
   mongo:
     image: mongo:latest
+    container_name: mongo
     restart: always
     ports:
       - 27017:27017

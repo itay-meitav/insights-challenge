@@ -1,4 +1,4 @@
-import { getKeywords, getLastDBItem, pushAlert } from "../DB/index";
+import { getKeywords, getLastDBItem, pushAlert } from "../database/index";
 import * as chrono from "chrono-node";
 import Scraper from "./scraper";
 

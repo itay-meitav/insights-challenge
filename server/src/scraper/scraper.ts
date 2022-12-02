@@ -1,20 +1,14 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import HttpProxyAgent from "http-proxy-agent";
-import { checkForDuplicatesDB, pushDataToDB } from "../DB";
+import { checkForDuplicatesDB, pushDataToDB } from "../database";
 import * as chrono from "chrono-node";
+import { IPaste } from "../models/paste.model";
 
 // HTTP/HTTPS proxy to connect to
 const proxy = process.env.HTTP_PROXY || "http://127.0.0.1:8118";
 const url =
   "http://paste2vljvhmwq5zy33re2hzu4fisgqsohufgbljqomib2brzx3q4mid.onion/lists/";
-
-type TPost = {
-  content: string;
-  author: string;
-  title: string;
-  date: Date;
-};
 
 export default class Scraper {
   constructor(public page: number) {}
@@ -60,22 +54,22 @@ export default class Scraper {
     if (res.success) {
       const links = this.getLinks(res.html);
       const posts = await Promise.all(
-        links.map(async (link): Promise<TPost> => {
+        links.map(async (link): Promise<IPaste> => {
           const res = await this.getHTML(link);
-          if (!res.success) return {} as TPost;
+          if (!res.success) return {} as IPaste;
           const post = this.scrapPost(res.html);
           this.checkAndUploadToDB(post);
-          return post as TPost;
+          return post as IPaste;
         })
       );
       return posts.filter((x) => x.content);
     }
-    return [] as TPost[];
+    return [] as IPaste[];
   }
 
   scrapPost(html: string) {
     const $ = cheerio.load(html);
-    const post: TPost = {
+    const post: IPaste = {
       content: this.getContent($),
       title: this.getTitle($),
       author: this.getAuthor($),
@@ -110,7 +104,7 @@ export default class Scraper {
     return author;
   }
 
-  removeDuplicates(posts: TPost[]) {
+  removeDuplicates(posts: IPaste[]) {
     const filteredPosts = posts.filter(
       (value, index, self) =>
         index ===
@@ -123,11 +117,11 @@ export default class Scraper {
     return filteredPosts;
   }
 
-  async savePostsInDB(posts: TPost[]) {
+  async savePostsInDB(posts: IPaste[]) {
     await pushDataToDB(posts);
   }
 
-  async checkAndUploadToDB(post: TPost) {
+  async checkAndUploadToDB(post: IPaste) {
     const test = await checkForDuplicatesDB(post.title, post.content);
     if (!test) {
       this.savePostsInDB([post]);

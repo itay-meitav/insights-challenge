@@ -43,7 +43,7 @@ export async function scrapLastPage() {
     ) {
       posts = await Scraper.scrap(page);
       if (j < 1 && posts.some((x) => keywords.includes(x))) {
-        pushAlert({
+        await pushAlert({
           alert: "New Posts with your keywords have been found",
           date: chrono.parseDate("now"),
         });
@@ -51,14 +51,14 @@ export async function scrapLastPage() {
       }
       page++;
     }
-    pushAlert({
+    await pushAlert({
       alert: "Data collection completed successfully",
       date: chrono.parseDate("now"),
     });
     return true;
   } catch (error) {
     console.log("error scrapping page");
-    pushAlert({
+    await pushAlert({
       alert: "Data collection has failed",
       date: chrono.parseDate("now"),
     });

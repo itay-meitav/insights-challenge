@@ -6,13 +6,13 @@ services:
     build:
       context: ./client
       dockerfile: ./Dockerfile
-      target: build
     environment:
       NODE_ENV: development
     ports:
       - 3000:3000
     volumes:
       - ./client:/app
+      - /app/node_modules
   server:
     container_name: server
     build:
@@ -20,12 +20,12 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: development
-      MONGO_HOST: mongo
       HTTP_PROXY: http://tor:8118
     ports:
       - 5000:5000
     volumes:
       - ./server:/app
+      - /app/node_modules
   tor:
     container_name: tor
     image: dperson/torproxy:latest
@@ -35,7 +35,7 @@ services:
   mongo:
     image: mongo:latest
     container_name: mongo
-    restart: always
+    restart: unless-stopped
     ports:
       - 27017:27017
     volumes:

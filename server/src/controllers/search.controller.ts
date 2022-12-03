@@ -3,5 +3,14 @@ import { getPastesHeading } from "../database";
 
 export async function searchOptions(req: Request, res: Response) {
   const data = await getPastesHeading();
-  res.json(data);
+  if (data) {
+    return res.json({
+      documents: data,
+      success: true,
+    });
+  }
+  res.status(500).json({
+    message: "Internal Server Error",
+    success: false,
+  });
 }

@@ -9,17 +9,29 @@ export async function getAlerts(req: Request, res: Response) {
   const offset = Number(req.query.offset) || 0;
   const orderBy = req.query.orderBy as string;
   const data = await getAlertsDB(limit, offset, parseInt(orderBy) > 0 ? 1 : -1);
-  const documents = data.documents;
-  const count = await data.count;
-  const pages = Math.ceil(count / limit);
-  res.json({
-    documents,
-    pages,
-    success: true,
+  if (data) {
+    res.json({
+      documents: data.documents,
+      pages: Math.ceil(data.count / limit),
+      success: true,
+    });
+  }
+  res.status(500).json({
+    message: "Internal Server Error",
+    success: false,
   });
 }
 
 export async function getLastAlert(req: Request, res: Response) {
-  const last = await getLastAlertDB();
-  res.json(last);
+  const data = await getLastAlertDB();
+  if (data) {
+    return res.json({
+      documents: data,
+      success: true,
+    });
+  }
+  res.status(500).json({
+    message: "Internal Server Error",
+    success: false,
+  });
 }

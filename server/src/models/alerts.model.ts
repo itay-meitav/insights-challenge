@@ -1,16 +1,16 @@
 import { Schema, model } from "mongoose";
 
 export interface IAlert {
-  content: string;
+  alert: string;
   date: Date;
 }
 
 const alertSchema = new Schema(
   {
-    content: { type: String, required: true },
+    alert: { type: String, required: true },
     date: { type: Date, required: true },
   },
   { collection: "alerts" }
 );
 
-export const Alert = model<IAlert>("Paste", alertSchema);
+export const Alert = model<IAlert>("Alert", alertSchema);

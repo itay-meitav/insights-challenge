@@ -2,8 +2,8 @@ require("dotenv").config();
 import express from "express";
 import cors from "cors";
 import apiRoute from "./routes/api.route";
-import { createServer } from "http";
-import { Server } from "socket.io";
+// import { createServer } from "http";
+// import { Server } from "socket.io";
 import { dbConnection } from "./config/connections";
 
 const app = express();

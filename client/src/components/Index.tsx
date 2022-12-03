@@ -42,7 +42,7 @@ const askForNewPosts = async () => {
   const url = `${config.apiHost}new`;
   const response = await fetch(url);
   const data = await response.json();
-  return data.success;
+  return data.documents;
 };
 
 function Index() {

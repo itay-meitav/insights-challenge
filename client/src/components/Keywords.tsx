@@ -24,7 +24,7 @@ async function changeKeywords(keywords: string[]) {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(keywords.map((x) => ({ keyword: x }))),
+    body: JSON.stringify({ keywords: keywords.map((x) => ({ keyword: x })) }),
   }).then(async (res) => {
     return await res.json();
   });

@@ -11,4 +11,4 @@ const keywordSchema = new Schema(
   { collection: "keywords" }
 );
 
-export const Keyword = model<IKeyword>("Paste", keywordSchema);
+export const Keyword = model<IKeyword>("Keyword", keywordSchema);

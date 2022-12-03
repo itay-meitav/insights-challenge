@@ -19,22 +19,19 @@ gulp.task("start", () => {
 
 // Transfers static files
 gulp.task("static", () => {
-  return gulp
-    .src(["src/**/*", "!src/**/*.ts", "!src/**/*.scss"], { allowEmpty: true })
-    .pipe(gulp.dest("./dist/"));
-});
-
-// Watch static files
-gulp.task("watch-static", () => {
-  return gulp.watch(
-    ["src/**/*", "!src/**/*.ts", "!src/**/*.scss"],
-    gulp.series("static")
-  );
+  return gulp.src(["src/**/*", "!src/**/*.ts"]).pipe(gulp.dest("./dist/"));
 });
 
 // Initial ts compile
 gulp.task("tsc", (cb) => {
   execLog("tsc", cb);
+});
+
+gulp.task("build", gulp.series("start", "static", "tsc"));
+
+// Watch static files
+gulp.task("watch-static", () => {
+  return gulp.watch(["src/**/*", "!src/**/*.ts"], gulp.series("static"));
 });
 
 // Watch ts files and recompile
@@ -44,7 +41,23 @@ gulp.task("tsc-w", () => {
 
 // start nodemon
 gulp.task("nodemon", () => {
-  execLog("nodemon dist/server");
+  execLog("nodemon dist/server.js");
+});
+
+// Run all together
+gulp.task(
+  "default",
+  gulp.series("build", gulp.parallel("watch-static", "tsc-w", "nodemon"))
+);
+
+gulp.task("copy-dist-to-deploy", () => {
+  return gulp.src(["./dist/**/*"]).pipe(gulp.dest("./deploy"));
+});
+
+gulp.task("copy-node-to-deploy", () => {
+  return gulp
+    .src(["./package.json", "./package-lock.json", "./.gitignore"])
+    .pipe(gulp.dest("./deploy"));
 });
 
 // if we'll want to integrate react with the api on the same server
@@ -59,24 +72,6 @@ gulp.task("clean-deploy", () => {
     })
     .pipe(clean());
 });
-
-gulp.task("copy-dist-to-deploy", () => {
-  return gulp.src(["./dist/**/*"]).pipe(gulp.dest("./deploy"));
-});
-
-gulp.task("copy-node-to-deploy", () => {
-  return gulp
-    .src(["./package.json", "./package-lock.json", "./.gitignore"])
-    .pipe(gulp.dest("./deploy"));
-});
-
-gulp.task("build", gulp.series("start", "static", "tsc"));
-
-// Run all together
-gulp.task(
-  "default",
-  gulp.series("build", gulp.parallel("watch-static", "tsc-w", "nodemon"))
-);
 
 gulp.task(
   "deploy",

@@ -6,16 +6,31 @@ import {
 
 export async function getKeywords(req: Request, res: Response) {
   const data = await getKeywordsDB();
-  res.json(data);
+  if (data) {
+    return res.json({
+      documents: data,
+      success: true,
+    });
+  }
+  res.status(500).json({
+    message: "Internal Server Error",
+    success: false,
+  });
 }
 
 export async function pushKeywords(req: Request, res: Response) {
-  try {
-    const data = req.body;
-    await pushKeywordsDB(data);
-    res.json({ success: true });
-  } catch (error) {
-    console.log(error);
-    res.json({ success: false });
+  if (req.body.keywords.length) {
+    const data = await pushKeywordsDB(req.body);
+    if (data) {
+      return res.json({ success: true });
+    }
+    res.status(500).json({
+      message: "Internal Server Error",
+      success: false,
+    });
   }
+  res.status(400).json({
+    message: "Please enter keywords list",
+    success: false,
+  });
 }

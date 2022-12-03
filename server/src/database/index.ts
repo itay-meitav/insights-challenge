@@ -18,21 +18,26 @@ export async function pushDataToDB(posts: IPaste[]) {
 }
 
 export async function getPastesHeading() {
-  const findResult = await Paste.find({}, { projection: { title: 1, _id: 0 } });
-
-  console.log("Search options have been sent from DB");
-  return findResult;
+  try {
+    return await Paste.find({}, { projection: { title: 1, _id: 0 } });
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function checkForDuplicatesDB(title: string, content: string) {
-  const findResult = await Paste.count({
-    title,
-    content,
-  });
-  if (findResult > 0) {
-    return true;
+  try {
+    const findResult = await Paste.count({
+      title,
+      content,
+    });
+    if (findResult > 0) {
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.log(error);
   }
-  return false;
 }
 
 export async function getPastes(
@@ -40,58 +45,62 @@ export async function getPastes(
   offset: number,
   sortBy: string,
   searchKey?: string,
-  keywords?: string
+  keywords?: boolean
 ) {
-  const findOptions: any = {};
-  const findKeywords: any = {};
-
-  function findDoc() {
-    if (searchKey) return findOptions;
-    if (keywords) return findKeywords;
-    if (!searchKey && !keywords) return {};
+  try {
+    const keywordsList = await getKeywords();
+    const searchParam = {};
+    if (searchKey && keywords) {
+      searchParam["title"] = {
+        $regex: new RegExp(searchKey + "|" + keywordsList.join("|"), "i"),
+      };
+    } else if (searchKey && !keywords) {
+      searchParam["title"] = {
+        $regex: new RegExp(searchKey, "i"),
+      };
+    } else if (!searchKey && keywords) {
+      searchParam["title"] = {
+        $regex: new RegExp(keywordsList.join("|"), "i"),
+      };
+    }
+    const res = await Paste.find(searchParam)
+      .sort([[sortBy, -1]])
+      .skip(offset)
+      .limit(limit);
+    const count = await Paste.count(searchParam);
+    return { documents: res, count: count };
+  } catch (error) {
+    console.log(error);
   }
-
-  if (searchKey) {
-    findOptions.title = {
-      $regex: new RegExp(searchKey, "i"),
-    };
-  }
-
-  if (keywords) {
-    const keywords = await getKeywords();
-    let regex = keywords.join("|");
-    findKeywords.title = {
-      $regex: new RegExp(regex, "i"),
-    };
-  }
-
-  const res = await Paste.find(findDoc())
-    .sort([[sortBy, -1]])
-    .skip(offset)
-    .limit(limit);
-
-  const count = Paste.countDocuments(findDoc());
-  console.log("posts results have been sent from DB");
-  return { documents: res, count: count };
 }
 
 export async function getLastDBItem() {
-  const last = await Paste.find().sort({ date: -1 }).limit(1);
-  return last[0];
+  try {
+    const last = await Paste.find().sort({ date: -1 }).limit(1);
+    return last[0];
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function getKeywords() {
-  const keywordsArr = await Keyword.find({});
-  return keywordsArr.map((x) => x.keyword);
+  try {
+    const keywordsArr = await Keyword.find({});
+    return keywordsArr.map((x) => x.keyword);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 export async function pushKeywords(arr: IKeyword[]) {
-  if (arr.length)
+  try {
     await dropC("keywords").then(() => {
       Keyword.insertMany(arr);
     });
-  else {
-    console.log("array is empty");
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 }
 
@@ -100,24 +109,36 @@ export async function getAlerts(
   offset: number,
   orderBy: 1 | -1
 ) {
-  const res = await Alert.find({})
-    .sort([["date", orderBy]])
-    .skip(offset)
-    .limit(limit);
-  const count = Alert.countDocuments({});
-  console.log("alerts results have been sent from DB");
-  return { documents: res, count: count };
+  try {
+    const res = await Alert.find({})
+      .sort([["date", orderBy]])
+      .skip(offset)
+      .limit(limit);
+    const count = await Alert.count({});
+    return { documents: res, count: count };
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 }
 
 export async function getLastAlert() {
-  const last = await Alert.find().sort({ date: -1 }).limit(1);
-  return last[0];
+  try {
+    const last = await Alert.find().sort({ date: -1 }).limit(1);
+    return last[0];
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
 }
 
 export async function pushAlert(alert: IAlert) {
-  if (alert) Alert.create(alert);
-  else {
-    console.log("alert is empty");
+  try {
+    await Alert.create(alert);
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
   }
 }
 

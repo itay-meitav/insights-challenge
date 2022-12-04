@@ -28,7 +28,7 @@ export function formatDate(date: string) {
 
 async function getPosts(options: IOptions) {
   const searchParams = new URLSearchParams(Object.entries(options));
-  const url = `${config.apiHost}posts?${searchParams.toString()}`;
+  const url = `${config.apiHost}api/pastes?${searchParams.toString()}`;
   const response = await fetch(url);
   if (response.ok) {
     const data = await response.json();
@@ -39,7 +39,7 @@ async function getPosts(options: IOptions) {
 }
 
 const askForNewPosts = async () => {
-  const url = `${config.apiHost}new`;
+  const url = `${config.apiHost}api/pastes/new`;
   const response = await fetch(url);
   const data = await response.json();
   return data.documents;

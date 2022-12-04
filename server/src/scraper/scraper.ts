@@ -30,7 +30,6 @@ export default class Scraper {
       return { success: true, html: res.data };
     } catch (error) {
       console.log(error);
-
       console.log("failed to fetch data at page " + this.page);
       // console.log(error);
       return { success: false };

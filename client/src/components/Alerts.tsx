@@ -13,7 +13,7 @@ interface IOptions {
 
 export async function getAlerts(options: IOptions) {
   const searchParams = new URLSearchParams(Object.entries(options));
-  const url = `${config.apiHost}alerts?${searchParams.toString()}`;
+  const url = `${config.apiHost}api/alerts?${searchParams.toString()}`;
   const response = await fetch(url);
   if (response.ok) {
     const data = await response.json();
@@ -24,7 +24,7 @@ export async function getAlerts(options: IOptions) {
 }
 
 export async function getLastAlert() {
-  const response = await fetch(`${config.apiHost}alerts/last`);
+  const response = await fetch(`${config.apiHost}api/alerts/last`);
   const lastAlert = await response.json();
   return lastAlert;
 }

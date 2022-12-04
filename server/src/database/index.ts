@@ -19,7 +19,7 @@ export async function pushDataToDB(posts: IPaste[]) {
 
 export async function getPastesHeading() {
   try {
-    return await Paste.find({}, { projection: { title: 1, _id: 0 } });
+    return await Paste.find({}, { projection: { title: 1 } });
   } catch (error) {
     console.log(error);
   }
@@ -44,8 +44,8 @@ export async function getPastes(
   limit: number,
   offset: number,
   sortBy: string,
-  searchKey?: string,
-  keywords?: boolean
+  searchKey: string | null,
+  keywords: boolean
 ) {
   try {
     const keywordsList = await getKeywords();

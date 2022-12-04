@@ -6,7 +6,7 @@ import alertsRouter from "./alerts.route";
 
 const router = express.Router();
 
-router.use("/posts", pastesRouter);
+router.use("/pastes", pastesRouter);
 router.use("/keywords", keywordsRouter);
 router.use("/search", searchRouter);
 router.use("/alerts", alertsRouter);

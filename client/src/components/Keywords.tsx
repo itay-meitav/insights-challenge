@@ -11,14 +11,14 @@ import ListGroup from "react-bootstrap/ListGroup";
 import config from "../assets/config";
 
 async function getKeywords() {
-  const data = await fetch(`${config.apiHost}keywords`).then((res) =>
+  const data = await fetch(`${config.apiHost}api/keywords`).then((res) =>
     res.json()
   );
   return data;
 }
 
 async function changeKeywords(keywords: string[]) {
-  return await fetch(`${config.apiHost}keywords`, {
+  return await fetch(`${config.apiHost}api/keywords`, {
     method: "POST",
     headers: {
       Accept: "application/json",

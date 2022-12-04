@@ -24,7 +24,7 @@ export async function pushKeywords(req: Request, res: Response) {
     if (data) {
       return res.json({ success: true });
     }
-    res.status(500).json({
+    return res.status(500).json({
       message: "Internal Server Error",
       success: false,
     });

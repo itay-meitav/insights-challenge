@@ -118,7 +118,7 @@ function LeftNav() {
               >
                 <NavDropdown.Item
                   onClick={() => {
-                    fetch(config.apiHost + "new")
+                    fetch(config.apiHost + "api/pastes/new")
                       .then((res) => {
                         if (res.ok) window.location.reload();
                       })

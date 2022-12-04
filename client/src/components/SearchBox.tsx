@@ -4,7 +4,7 @@ import { Button, Dropdown, Form } from "react-bootstrap";
 import { useSearchParams } from "react-router-dom";
 
 function getOptions() {
-  return fetch(config.apiHost + "search-options")
+  return fetch(config.apiHost + "api/search/")
     .then((res) => {
       if (res.ok) return res.json();
       else throw new Error("something went wrong");

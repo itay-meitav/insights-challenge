@@ -10,7 +10,7 @@ export async function getAlerts(req: Request, res: Response) {
   const orderBy = req.query.orderBy as string;
   const data = await getAlertsDB(limit, offset, parseInt(orderBy) > 0 ? 1 : -1);
   if (data) {
-    res.json({
+    return res.json({
       documents: data.documents,
       pages: Math.ceil(data.count / limit),
       success: true,

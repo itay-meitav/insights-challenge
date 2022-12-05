@@ -31,13 +31,6 @@ const port = process.env.PORT || 5000;
   }
 })();
 
-app.use((req, res) => {
-  res.status(404).json({
-    message: "Requested resource was not found on this server",
-    success: false,
-  });
-});
-
 //This will output unhandled Rejection
 process.on("unhandledRejection", (error: Error, promise) => {
   console.log(`unhandled Rejection: ${error} \n ErrorStack: ${error.stack}`);

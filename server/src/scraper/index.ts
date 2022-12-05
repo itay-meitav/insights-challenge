@@ -27,7 +27,7 @@ async function scrapAll() {
   }
   console.log("done");
 }
-scrapAll();
+// scrapAll();
 
 export async function scrapLastPage() {
   const keywords = await getKeywords();

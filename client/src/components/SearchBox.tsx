@@ -46,7 +46,7 @@ function SearchBox() {
         setOptions(arr);
       })
       .catch((err) => {
-        console.log("error while fetching search options");
+        console.log(err);
       });
   }, []);
 

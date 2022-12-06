@@ -1,15 +1,17 @@
 import React, { useEffect } from "react";
 import Navbar from "../Navbar";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
 
 function Template() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
-    if (window.location.pathname == "/") navigate("pastes");
+    if (location.pathname == "/") navigate("pastes");
   }, []);
+
   return (
-    <div className="template">
+    <div className="flex flex-col align-items-center min-h-screen w-full bg-slate-100 ">
       <Navbar />
       <Outlet />
     </div>

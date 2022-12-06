@@ -18,13 +18,6 @@ type Alert = {
   date: Date;
 };
 
-const askForNewPastes = async () => {
-  const url = `${config.apiHost}api/pastes/new`;
-  const response = await fetch(url);
-  const data = await response.json();
-  return data.documents;
-};
-
 function Index() {
   const [alerts, setAlerts] = useState<Alert[]>([]);
   const [pastes, setPastes] = useState<Paste[]>([]);

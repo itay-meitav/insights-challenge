@@ -1,13 +1,36 @@
-import React from "react";
-import Heading from "../Heading";
+import React, { useEffect, useState } from "react";
+import { useLocation, useSearchParams } from "react-router-dom";
+import config from "../../assets/config";
+import List from "./List";
+import Pagination from "./Pagination";
+import { useRecoilState } from "recoil";
+import { pastesState } from "./globalStates";
+import "tw-elements";
+
+const askForNewPastes = async () => {
+  const url = `${config.apiHost}api/pastes/new`;
+  const response = await fetch(url);
+  const data = await response.json();
+  return data.documents;
+};
 
 function Pastes() {
+  const [pastes, setPastes] = useRecoilState(pastesState);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
+
+  useEffect(() => {
+    fetch(`${config.apiHost}api/pastes${location.search}`)
+      .then(async (res) => await res.json())
+      .then((data) => {
+        setPastes({ pastes: data.documents, totalPages: data.pages });
+      });
+  }, [searchParams]);
+
   return (
     <div>
-      <Heading
-        heading="Recent Pastes"
-        des="Click on the paste's heading to view its content"
-      />
+      <List />
+      <Pagination />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { BriefcaseIcon } from "@heroicons/react/20/solid";
+import { InformationCircleIcon } from "@heroicons/react/20/solid";
 
 type Tprops = {
   heading: string;
@@ -14,7 +14,7 @@ export default function Heading(props: Tprops) {
         </h2>
         <div className="mt-1 flex flex-col sm:mt-0 sm:flex-row sm:flex-wrap sm:space-x-6">
           <div className="mt-2 flex items-center text-sm text-gray-500">
-            <BriefcaseIcon
+            <InformationCircleIcon
               className="mr-1.5 h-5 w-5 flex-shrink-0 text-gray-400"
               aria-hidden="true"
             />

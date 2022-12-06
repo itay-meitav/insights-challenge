@@ -1,4 +1,3 @@
-import { Fragment } from "react";
 import { Disclosure } from "@headlessui/react";
 import {
   Bars3Icon,
@@ -7,18 +6,30 @@ import {
   ClipboardDocumentCheckIcon,
 } from "@heroicons/react/24/outline";
 import Search from "./Search";
-
-const navigation = [
-  { name: "Main", href: "#", current: true },
-  { name: "Tags", href: "#", current: false },
-  { name: "Statistics", href: "#", current: false },
-];
+import { useNavigate, useLocation } from "react-router-dom";
 
 function classNames(...classes: any[]) {
   return classes.filter(Boolean).join(" ");
 }
 
 export default function Navbar() {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const navigation = [
+    {
+      name: "Pastes",
+      current: location.pathname == "/pastes" ? true : false,
+    },
+    {
+      name: "Tags",
+      current: location.pathname == "/tags" ? true : false,
+    },
+    {
+      name: "Statistics",
+      current: location.pathname == "/statistics" ? true : false,
+    },
+  ];
+
   return (
     <Disclosure as="nav" className="bg-gray-800">
       {({ open }) => (
@@ -46,9 +57,10 @@ export default function Navbar() {
                 <div className="hidden sm:ml-6 sm:block">
                   <div className="flex space-x-4">
                     {navigation.map((item) => (
-                      <a
+                      <div
                         key={item.name}
-                        href={item.href}
+                        style={{ cursor: "pointer" }}
+                        onClick={() => navigate(`/${item.name.toLowerCase()}`)}
                         className={classNames(
                           item.current
                             ? "bg-gray-900 text-white"
@@ -58,7 +70,7 @@ export default function Navbar() {
                         aria-current={item.current ? "page" : undefined}
                       >
                         {item.name}
-                      </a>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -81,8 +93,9 @@ export default function Navbar() {
               {navigation.map((item) => (
                 <Disclosure.Button
                   key={item.name}
-                  as="a"
-                  href={item.href}
+                  as="div"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => navigate(`/${item.name.toLowerCase()}`)}
                   className={classNames(
                     item.current
                       ? "bg-gray-900 text-white"

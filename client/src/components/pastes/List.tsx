@@ -8,7 +8,7 @@ import {
   AccordionBody,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import "tw-elements";
+// import "tw-elements";
 
 export default function List() {
   const [pastes, setPastes] = useRecoilState(pastesState);

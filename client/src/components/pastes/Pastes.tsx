@@ -27,6 +27,7 @@ function Pastes() {
           pastesCount: data.count,
         });
       });
+    console.log(pastes);
   }, [searchParams]);
 
   return (

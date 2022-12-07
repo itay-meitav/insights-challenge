@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
-import {
-  getKeywords as getKeywordsDB,
-  pushKeywords as pushKeywordsDB,
-} from "../database";
+import { getTags as getTagsDB, pushTags as pushTagsDB } from "../database";
 
-export async function getKeywords(req: Request, res: Response) {
-  const data = await getKeywordsDB();
+export async function getTags(req: Request, res: Response) {
+  const data = await getTagsDB();
   if (data) {
     return res.json({
       documents: data,
@@ -18,9 +15,9 @@ export async function getKeywords(req: Request, res: Response) {
   });
 }
 
-export async function pushKeywords(req: Request, res: Response) {
-  if (req.body.keywords.length) {
-    const data = await pushKeywordsDB(req.body);
+export async function pushTags(req: Request, res: Response) {
+  if (req.body.tags.length) {
+    const data = await pushTagsDB(req.body);
     if (data) {
       return res.json({ success: true });
     }
@@ -30,7 +27,7 @@ export async function pushKeywords(req: Request, res: Response) {
     });
   }
   res.status(400).json({
-    message: "Please enter keywords list",
+    message: "Please enter tags list",
     success: false,
   });
 }

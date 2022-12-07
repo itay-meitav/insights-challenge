@@ -1,6 +1,6 @@
 import { connection } from "mongoose";
 import { IPaste, Paste } from "../models/paste.model";
-import { Keyword, IKeyword } from "../models/keyword.model";
+import { Tag, ITag } from "../models/tags.model";
 import { Alert, IAlert } from "../models/alerts.model";
 
 const db = connection;
@@ -27,7 +27,7 @@ export async function getPastesHeading() {
 
 export async function checkForDuplicatesDB(title: string, content: string) {
   try {
-    const findResult = await Paste.count({
+    const findResult = await Paste.countDocuments({
       title,
       content,
     });
@@ -41,33 +41,34 @@ export async function checkForDuplicatesDB(title: string, content: string) {
 }
 
 export async function getPastes(
-  limit: number,
-  offset: number,
-  sortBy: string,
-  searchKey: string | null,
-  keywords: boolean
+  page: number,
+  orderBy: string,
+  search: string | null,
+  tags: boolean
 ) {
   try {
-    const keywordsList = await getKeywords();
+    const tagsList = await getTags();
     const searchParam = {};
-    if (searchKey && keywords) {
+    if (search && tags) {
       searchParam["title"] = {
-        $regex: new RegExp(searchKey + "|" + keywordsList.join("|"), "i"),
+        $regex: new RegExp(search + "|" + tagsList.join("|"), "i"),
       };
-    } else if (searchKey && !keywords) {
+    } else if (search && !tags) {
+      console.log("hi2");
+
       searchParam["title"] = {
-        $regex: new RegExp(searchKey, "i"),
+        $regex: new RegExp(search, "i"),
       };
-    } else if (!searchKey && keywords) {
+    } else if (!search && tags) {
       searchParam["title"] = {
-        $regex: new RegExp(keywordsList.join("|"), "i"),
+        $regex: new RegExp(tagsList.join("|"), "i"),
       };
     }
     const res = await Paste.find(searchParam)
-      .sort([[sortBy, -1]])
-      .skip(offset)
-      .limit(limit);
-    const count = await Paste.count(searchParam);
+      .sort([[orderBy, -1]])
+      .skip(page * 20 - 20)
+      .limit(20);
+    const count = await Paste.countDocuments(searchParam);
     return { documents: res, count: count };
   } catch (error) {
     console.log(error);
@@ -83,19 +84,19 @@ export async function getLastDBItem() {
   }
 }
 
-export async function getKeywords() {
+export async function getTags() {
   try {
-    const keywordsArr = await Keyword.find({});
-    return keywordsArr.map((x) => x.keyword);
+    const tagsArr = await Tag.find({});
+    return tagsArr.map((x) => x.tag);
   } catch (error) {
     console.log(error);
   }
 }
 
-export async function pushKeywords(arr: IKeyword[]) {
+export async function pushTags(arr: ITag[]) {
   try {
-    await dropC("keywords").then(() => {
-      Keyword.insertMany(arr);
+    await dropC("tags").then(() => {
+      Tag.insertMany(arr);
     });
     return true;
   } catch (error) {

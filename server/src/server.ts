@@ -15,7 +15,6 @@ app.use(
     origin: true,
   })
 );
-
 app.use("/api", apiRoute);
 
 const port = process.env.PORT || 5000;

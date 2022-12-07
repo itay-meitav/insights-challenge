@@ -1,4 +1,4 @@
-import { getKeywords, getLastDBItem, pushAlert } from "../database/index";
+import { getTags, getLastDBItem, pushAlert } from "../database/index";
 import * as chrono from "chrono-node";
 import Scraper from "./scraper";
 
@@ -30,7 +30,7 @@ async function scrapAll() {
 // scrapAll();
 
 export async function scrapLastPage() {
-  const keywords = await getKeywords();
+  const tags = await getTags();
   try {
     const lastDBItem = await getLastDBItem();
     let page = 1;
@@ -43,9 +43,9 @@ export async function scrapLastPage() {
       )
     ) {
       posts = await Scraper.scrap(page);
-      if (j < 1 && posts.some((x) => keywords.includes(x))) {
+      if (j < 1 && posts.some((x) => tags.includes(x))) {
         await pushAlert({
-          alert: "New Posts with your keywords have been found",
+          alert: "New Pastes with your tags have been found",
           date: chrono.parseDate("now"),
         });
         j++;

@@ -2,21 +2,22 @@ import { Request, Response } from "express";
 import { getPastes as getPastesFromDB } from "../database";
 import { scrapLastPage } from "../scraper";
 
-export async function getPastes(req: Request, res: Response) {
-  const limit = Number(req.query.limit) || 20;
-  const offset = Number(req.query.offset) || 0;
-  const search = req.query.search as string;
-  const keywords = Boolean(req.query.keywords) || false;
-  const orderBy = req.query.orderBy
-    ? (req.query.orderBy + "")?.split(" ")[0].replaceAll("-", "")
-    : "date";
-  const postsReq = await getPastesFromDB(
-    limit,
-    offset,
-    orderBy,
-    search,
-    keywords
-  );
+type TQuery = {
+  page: number;
+  orderBy: string;
+  search: string | undefined;
+  tags: boolean;
+};
+
+export async function getPastes(
+  req: Request<{}, {}, {}, TQuery>,
+  res: Response
+) {
+  const page = req.query.page || 1;
+  const orderBy = req.query.orderBy || "date";
+  const search = req.query.search || "";
+  const tags = req.query.tags || false;
+  const postsReq = await getPastesFromDB(page, orderBy, search, tags);
   if (postsReq) {
     return res.json({
       documents: postsReq.documents,

@@ -20,7 +20,7 @@ export async function getPastes(req: Request, res: Response) {
   if (postsReq) {
     return res.json({
       documents: postsReq.documents,
-      pages: Math.ceil(postsReq.count / limit),
+      count: postsReq.count,
       success: true,
     });
   }

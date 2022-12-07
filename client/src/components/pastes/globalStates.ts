@@ -9,10 +9,10 @@ type Paste = {
 
 type TPastesState = {
   pastes: Paste[];
-  totalPages: number;
+  pastesCount: number;
 };
 
 export const pastesState = atom({
   key: "pastesState",
-  default: { pastes: [], totalPages: 0 } as TPastesState,
+  default: { pastes: [], pastesCount: 0 } as TPastesState,
 });

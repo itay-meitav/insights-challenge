@@ -5,7 +5,6 @@ import List from "./List";
 import Pagination from "./Pagination";
 import { useRecoilState } from "recoil";
 import { pastesState } from "./globalStates";
-import "tw-elements";
 
 const askForNewPastes = async () => {
   const url = `${config.apiHost}api/pastes/new`;
@@ -23,7 +22,10 @@ function Pastes() {
     fetch(`${config.apiHost}api/pastes${location.search}`)
       .then(async (res) => await res.json())
       .then((data) => {
-        setPastes({ pastes: data.documents, totalPages: data.pages });
+        setPastes({
+          pastes: data.documents,
+          pastesCount: data.count,
+        });
       });
   }, [searchParams]);
 

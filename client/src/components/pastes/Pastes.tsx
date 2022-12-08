@@ -18,17 +18,17 @@ function Pastes() {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
 
-  useEffect(() => {
-    fetch(`${config.apiHost}api/pastes${location.search}`)
-      .then(async (res) => await res.json())
-      .then((data) => {
-        setPastes({
-          pastes: data.documents,
-          pastesCount: data.count,
-        });
-      });
-    console.log(pastes);
-  }, [searchParams]);
+  // useEffect(() => {
+  //   fetch(`${config.apiHost}api/pastes${location.search}`)
+  //     .then(async (res) => await res.json())
+  //     .then((data) => {
+  //       setPastes({
+  //         pastes: data.documents,
+  //         pastesCount: data.count,
+  //       });
+  //     });
+  //   console.log(pastes);
+  // }, [searchParams]);
 
   return (
     <div>

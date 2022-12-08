@@ -19,7 +19,7 @@ export async function pushDataToDB(posts: IPaste[]) {
 
 export async function getPastesHeading() {
   try {
-    return await Paste.find({}, { projection: { title: 1 } });
+    return await Paste.find({}, { title: 1 });
   } catch (error) {
     console.log(error);
   }

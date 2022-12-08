@@ -23,8 +23,10 @@ export default function Pagination() {
       <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
         <div>
           <p className="text-sm text-gray-700">
-            Showing <span className="font-medium">{pastes.pastes.length}</span>{" "}
-            of <span className="font-medium">{pastes.pastesCount}</span> results
+            Showing{" "}
+            <span className="font-medium">{pastes.pastes.length || 0}</span> of{" "}
+            <span className="font-medium">{pastes.pastesCount || 0}</span>{" "}
+            results
           </p>
         </div>
         <div>

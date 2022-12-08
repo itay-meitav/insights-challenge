@@ -24,8 +24,13 @@ export default function Pagination() {
         <div>
           <p className="text-sm text-gray-700">
             Showing{" "}
-            <span className="font-medium">{pastes.pastes.length || 0}</span> of{" "}
-            <span className="font-medium">{pastes.pastesCount || 0}</span>{" "}
+            <span className="font-medium">
+              {pastes.pastes ? pastes.pastes.length : 0}
+            </span>{" "}
+            of{" "}
+            <span className="font-medium">
+              {pastes.pastesCount ? pastes.pastesCount : 0}
+            </span>{" "}
             results
           </p>
         </div>

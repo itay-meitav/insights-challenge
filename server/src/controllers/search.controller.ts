@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { getPastesHeading } from "../database";
+import { getPastesHeadings } from "../database";
 
 export async function searchOptions(req: Request, res: Response) {
-  const data = await getPastesHeading();
+  const data = await getPastesHeadings();
   if (data) {
     return res.json({
       documents: data,

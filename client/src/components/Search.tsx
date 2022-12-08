@@ -16,13 +16,14 @@ function Search() {
   const filteredOptions = searchOptions.filter((option) =>
     option.toLowerCase().includes(searchValue.toLowerCase())
   );
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     if (location.pathname == "/pastes") {
       fetch(config.apiHost + "api/search/").then(async (res) => {
         if (res.ok) {
           const data = await res.json();
-          setSearchOptions(data.documents.map((x: any) => x.title));
+          setSearchOptions(data.documents);
         }
       });
     } else {
@@ -42,6 +43,7 @@ function Search() {
     <div className="relative ml-3 rounded-md shadow-sm">
       <Menu
         open={
+          !open ||
           filteredOptions.includes(searchValue) ||
           !filteredOptions.length ||
           !searchValue ||
@@ -59,6 +61,8 @@ function Search() {
             placeholder="Search Here..."
             disabled={location.pathname !== "/pastes" ? true : false}
             value={searchValue}
+            onBlur={() => setOpen(false)}
+            onFocus={() => setOpen(true)}
             onChange={(e) => {
               const val = e.currentTarget.value;
               searchParams.set("search", val);

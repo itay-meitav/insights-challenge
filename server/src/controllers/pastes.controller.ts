@@ -4,7 +4,8 @@ import { scrapLastPage } from "../scraper";
 
 type TQuery = {
   page: number;
-  orderBy: string;
+  sort: string;
+  order: number;
   search: string | undefined;
   tags: boolean;
 };
@@ -14,10 +15,11 @@ export async function getPastes(
   res: Response
 ) {
   const page = req.query.page || 1;
-  const orderBy = req.query.orderBy || "date";
+  const sort = req.query.sort || "date";
+  const order = req.query.order || 1;
   const search = req.query.search || "";
   const tags = req.query.tags || false;
-  const postsReq = await getPastesFromDB(page, orderBy, search, tags);
+  const postsReq = await getPastesFromDB(page, sort, order, search, tags);
   if (postsReq) {
     return res.json({
       documents: postsReq.documents,

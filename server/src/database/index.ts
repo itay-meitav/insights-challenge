@@ -1,7 +1,8 @@
-import { connection } from "mongoose";
+import { connection, SortOrder } from "mongoose";
 import { IPaste, Paste } from "../models/paste.model";
 import { Tag, ITag } from "../models/tags.model";
 import { Alert, IAlert } from "../models/alerts.model";
+import escapeStringRegexp from "escape-string-regexp";
 
 const db = connection;
 db.on("error", (err) => {
@@ -17,9 +18,10 @@ export async function pushDataToDB(posts: IPaste[]) {
   }
 }
 
-export async function getPastesHeading() {
+export async function getPastesHeadings() {
   try {
-    return await Paste.find({}, { title: 1 });
+    const pastesHeadings = await Paste.find({}, { title: 1, _id: 0 });
+    return pastesHeadings.map((x) => x.title);
   } catch (error) {
     console.log(error);
   }
@@ -42,33 +44,40 @@ export async function checkForDuplicatesDB(title: string, content: string) {
 
 export async function getPastes(
   page: number,
-  orderBy: string,
+  sort: string,
+  order: number,
   search: string | null,
   tags: boolean
 ) {
   try {
     const tagsList = await getTags();
-    const searchParam = {};
+    let findQuery = {};
+    const searchRegex = new RegExp(escapeStringRegexp(search), "i");
     if (search && tags) {
-      searchParam["title"] = {
-        $regex: new RegExp(search + "|" + tagsList.join("|"), "i"),
+      findQuery = {
+        $or: [
+          { title: searchRegex },
+          { content: searchRegex },
+          { author: searchRegex },
+        ],
       };
+      if (tagsList.length > 0) findQuery["tags"] = { $in: tags };
     } else if (search && !tags) {
-      console.log("hi2");
-
-      searchParam["title"] = {
-        $regex: new RegExp(search, "i"),
+      findQuery = {
+        $or: [
+          { title: searchRegex },
+          { content: searchRegex },
+          { author: searchRegex },
+        ],
       };
     } else if (!search && tags) {
-      searchParam["title"] = {
-        $regex: new RegExp(tagsList.join("|"), "i"),
-      };
+      if (tagsList.length > 0) findQuery["tags"] = { $in: tags };
     }
-    const res = await Paste.find(searchParam)
-      .sort([[orderBy, -1]])
+    const res = await Paste.find(findQuery)
+      .sort([[sort, order as SortOrder]])
       .skip(page * 20 - 20)
       .limit(20);
-    const count = await Paste.countDocuments(searchParam);
+    const count = await Paste.countDocuments(findQuery);
     return { documents: res, count: count };
   } catch (error) {
     console.log(error);
@@ -105,14 +114,10 @@ export async function pushTags(arr: ITag[]) {
   }
 }
 
-export async function getAlerts(
-  limit: number,
-  offset: number,
-  orderBy: 1 | -1
-) {
+export async function getAlerts(limit: number, offset: number, sort: 1 | -1) {
   try {
     const res = await Alert.find({})
-      .sort([["date", orderBy]])
+      .sort([["date", sort]])
       .skip(offset)
       .limit(limit);
     const count = await Alert.count({});

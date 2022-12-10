@@ -10,7 +10,7 @@ RUN npm install
 COPY . .
 
 ENV NODE_ENV=development
-ENV HTTP_PROXY=http://tor:8118
+
 
 EXPOSE 5000
 

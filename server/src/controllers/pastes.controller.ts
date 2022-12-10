@@ -16,7 +16,7 @@ export async function getPastes(
 ) {
   const page = req.query.page || 1;
   const sort = req.query.sort || "date";
-  const order = req.query.order || 1;
+  const order = req.query.order || -1;
   const search = req.query.search || "";
   const tags = req.query.tags || false;
   const postsReq = await getPastesFromDB(page, sort, order, search, tags);

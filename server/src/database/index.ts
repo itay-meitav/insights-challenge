@@ -2,17 +2,16 @@ import { connection, SortOrder } from "mongoose";
 import { IPaste, Paste } from "../models/paste.model";
 import { Tag, ITag } from "../models/tags.model";
 import { Alert, IAlert } from "../models/alerts.model";
-import escapeStringRegexp from "escape-string-regexp";
+import escapeRegexp from "escape-string-regexp-node";
 
 const db = connection;
 db.on("error", (err) => {
   console.log(err);
 });
 
-export async function pushDataToDB(posts: IPaste[]) {
+export async function pushPasteToDB(paste: IPaste) {
   try {
-    await Paste.insertMany(posts);
-    // console.log(`Inserted ${posts.length} documents to DB`);
+    await Paste.insertMany(paste);
   } catch (error) {
     console.log("error inserting data to DB");
   }
@@ -30,8 +29,7 @@ export async function getPastesHeadings() {
 export async function checkForDuplicatesDB(title: string, content: string) {
   try {
     const findResult = await Paste.countDocuments({
-      title,
-      content,
+      $and: [{ title: title }, { content: content }],
     });
     if (findResult > 0) {
       return true;
@@ -52,7 +50,7 @@ export async function getPastes(
   try {
     const tagsList = await getTags();
     let findQuery = {};
-    const searchRegex = new RegExp(escapeStringRegexp(search), "i");
+    const searchRegex = new RegExp(escapeRegexp(search), "i");
     if (search && tags) {
       findQuery = {
         $or: [
@@ -86,7 +84,7 @@ export async function getPastes(
 
 export async function getLastDBItem() {
   try {
-    const last = await Paste.find().sort({ date: -1 }).limit(1);
+    const last = await Paste.find({}).sort({ date: -1 }).limit(1);
     return last[0];
   } catch (error) {
     console.log(error);

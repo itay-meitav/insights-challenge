@@ -27,6 +27,7 @@ async function scrapAll() {
   }
   console.log("done");
 }
+
 // scrapAll();
 
 export async function scrapLastPage() {

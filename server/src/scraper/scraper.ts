@@ -1,36 +1,35 @@
 import axios from "axios";
 import cheerio from "cheerio";
 import HttpProxyAgent from "http-proxy-agent";
-import { checkForDuplicatesDB, pushDataToDB } from "../database";
+import { checkForDuplicatesDB, pushPasteToDB } from "../database";
 import * as chrono from "chrono-node";
 import { IPaste } from "../models/paste.model";
 
 // HTTP/HTTPS proxy to connect to
-const proxy = process.env.HTTP_PROXY || "http://127.0.0.1:8118";
+const proxy = "http://tor:8118";
 const url =
   "http://paste2vljvhmwq5zy33re2hzu4fisgqsohufgbljqomib2brzx3q4mid.onion/lists/";
 
 export default class Scraper {
-  constructor(public page: number) {}
+  page: number;
+  constructor(page?: number) {
+    this.page = page || 1;
+  }
 
-  static async scrap(page: number = 1) {
+  static async scrap(page: number) {
     const scrapper = new Scraper(page);
-    const posts = await scrapper.getPosts();
-    return posts;
+    await scrapper.getPastes();
   }
 
   async getHTML(link: string) {
     try {
       const agent = HttpProxyAgent(proxy);
-      // console.log("using proxy server", proxy);
-      // console.log("attempting to GET", link);
       const res = await axios(link, {
         httpAgent: agent,
       });
       return { success: true, html: res.data };
     } catch (error) {
       console.log("failed to fetch data at page " + this.page);
-      // console.log(error);
       return { success: false };
     }
   }
@@ -46,34 +45,32 @@ export default class Scraper {
     return links;
   }
 
-  async getPosts() {
-    const page = (this.page - 1) * 50;
-    const res = await this.getHTML(url + page);
-    if (res.success) {
+  async getPastes() {
+    try {
+      const page = (this.page - 1) * 50;
+      const res = await this.getHTML(url + page);
       const links = this.getLinks(res.html);
-      const posts = await Promise.all(
-        links.map(async (link): Promise<IPaste> => {
+      await Promise.all(
+        links.map(async (link) => {
           const res = await this.getHTML(link);
-          if (!res.success) return {} as IPaste;
-          const post = this.scrapPost(res.html);
-          this.checkAndUploadToDB(post);
-          return post as IPaste;
+          const paste = this.scrapPaste(res.html);
+          await this.checkAndUploadToDB(paste);
         })
       );
-      return posts.filter((x) => x.content);
+    } catch (error) {
+      console.log(error);
     }
-    return [] as IPaste[];
   }
 
-  scrapPost(html: string) {
+  scrapPaste(html: string) {
     const $ = cheerio.load(html);
-    const post: IPaste = {
+    const paste: IPaste = {
       content: this.getContent($),
       title: this.getTitle($),
       author: this.getAuthor($),
       date: this.getDate($),
     };
-    return post;
+    return paste;
   }
 
   getContent($: cheerio.Root) {
@@ -102,28 +99,31 @@ export default class Scraper {
     return author;
   }
 
-  removeDuplicates(posts: IPaste[]) {
-    const filteredPosts = posts.filter(
-      (value, index, self) =>
-        index ===
-        self.findIndex(
-          (t) =>
-            t.title.toLowerCase() === value.title.toLowerCase() &&
-            t.content.toLowerCase() === value.content.toLowerCase()
-        )
+  async checkAndUploadToDB(paste: IPaste) {
+    const test = await checkForDuplicatesDB(paste.title, paste.content);
+    if (test) {
+      return false;
+    }
+    const fixing: IPaste = Object.assign(
+      {},
+      ...Object.entries(paste).map(([k, v]) => {
+        if (k == "date") {
+          return { [k]: paste.date };
+        }
+        return { [k]: removeInitialNonAlphabeticChars(v) };
+      })
     );
-    return filteredPosts;
-  }
-
-  async savePostsInDB(posts: IPaste[]) {
-    await pushDataToDB(posts);
-  }
-
-  async checkAndUploadToDB(post: IPaste) {
-    const test = await checkForDuplicatesDB(post.title, post.content);
-    if (!test) {
-      this.savePostsInDB([post]);
+    if (fixing.title && fixing.content) {
+      return await pushPasteToDB(fixing);
     }
     return false;
   }
+}
+
+function removeInitialNonAlphabeticChars(string: string) {
+  let i = 0;
+  while (i < string.length && !string[i].match(/[a-zA-Z]/)) {
+    i += 1;
+  }
+  return string.substring(i);
 }

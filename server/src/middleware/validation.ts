@@ -6,6 +6,6 @@ export const validatePastes = celebrate({
     search: Joi.string(),
     tags: Joi.boolean(),
     sort: Joi.string().valid("title", "author", "date", "content"),
-    order: Joi.number().integer(),
+    order: Joi.number().integer().valid(1, -1),
   },
 });

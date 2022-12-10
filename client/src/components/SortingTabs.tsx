@@ -75,7 +75,7 @@ function SortingTabs() {
                       }
                     } else {
                       removeAllParams();
-                      setParams(value, "-1");
+                      setParams(value, "1");
                     }
                   }}
                   key={value}

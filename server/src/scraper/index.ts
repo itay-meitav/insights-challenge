@@ -3,7 +3,8 @@ import * as chrono from "chrono-node";
 import Scraper from "./scraper";
 
 async function scrapAll() {
-  for (let i = 50; i > 0; i--) {
+  const lastPage = await Scraper.getLastPage();
+  for (let i = lastPage; i > 0; i--) {
     const j = i - 1;
     await Promise.all([
       Scraper.scrap(i).then(

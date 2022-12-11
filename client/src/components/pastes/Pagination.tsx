@@ -1,4 +1,9 @@
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+} from "@heroicons/react/20/solid";
 import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useRecoilState } from "recoil";
@@ -11,11 +16,9 @@ export default function Pagination() {
   const currentPage = Number(searchParams.get("page")) || 1;
 
   useEffect(() => {
-    const pages: number[] = [];
-    for (let i = 1; i < Math.ceil(pastes.pastesCount / 20) + 1; i++) {
-      pages.push(i);
-    }
-    setTotalPages(pages);
+    setTotalPages(
+      Array.from(Array(Math.ceil(pastes.pastesCount / 20)), (_, i) => i + 1)
+    );
   }, [pastes.pastesCount]);
 
   return (
@@ -42,36 +45,50 @@ export default function Pagination() {
             <div
               style={{ cursor: "pointer" }}
               onClick={() => {
+                searchParams.set("page", Math.min(...totalPages).toString());
+                setSearchParams(searchParams);
+              }}
+              className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+            >
+              <span className="sr-only">Start</span>
+              <ChevronDoubleLeftIcon className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
                 if (totalPages.includes(currentPage - 1)) {
                   searchParams.set("page", String(currentPage - 1));
                   setSearchParams(searchParams);
                 } else {
-                  searchParams.set("page", String(currentPage));
-                  setSearchParams(searchParams);
+                  return false;
                 }
               }}
-              className="relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+              className="relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
             >
               <span className="sr-only">Previous</span>
               <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
             </div>
-            {totalPages.map((x, i) => (
-              <div
-                key={i}
-                style={{ cursor: "pointer" }}
-                className={
-                  x == currentPage
-                    ? "relative z-10 inline-flex items-center border border-indigo-500 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-600 focus:z-20"
-                    : "relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
-                }
-                onClick={() => {
-                  searchParams.set("page", String(x));
-                  setSearchParams(searchParams);
-                }}
-              >
-                {x}
-              </div>
-            ))}
+            {totalPages.map((x, i) =>
+              currentPage - 2 <= x && currentPage + 3 > x ? (
+                <div
+                  key={i}
+                  style={{ cursor: "pointer" }}
+                  className={
+                    x == currentPage
+                      ? "relative z-10 inline-flex items-center border border-indigo-500 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-600 focus:z-20"
+                      : "relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+                  }
+                  onClick={() => {
+                    searchParams.set("page", String(x));
+                    setSearchParams(searchParams);
+                  }}
+                >
+                  {x}
+                </div>
+              ) : (
+                ""
+              )
+            )}
             <div
               style={{ cursor: "pointer" }}
               onClick={() => {
@@ -79,14 +96,24 @@ export default function Pagination() {
                   searchParams.set("page", String(currentPage + 1));
                   setSearchParams(searchParams);
                 } else {
-                  searchParams.set("page", String(currentPage));
-                  setSearchParams(searchParams);
+                  return false;
                 }
               }}
-              className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+              className="relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
             >
               <span className="sr-only">Next</span>
               <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+            </div>
+            <div
+              style={{ cursor: "pointer" }}
+              onClick={() => {
+                searchParams.set("page", Math.max(...totalPages).toString());
+                setSearchParams(searchParams);
+              }}
+              className="relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+            >
+              <span className="sr-only">End</span>
+              <ChevronDoubleRightIcon className="h-5 w-5" aria-hidden="true" />
             </div>
           </nav>
         </div>

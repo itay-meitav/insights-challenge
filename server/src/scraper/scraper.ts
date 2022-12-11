@@ -21,6 +21,23 @@ export default class Scraper {
     await scrapper.getPastes();
   }
 
+  static async getLastPage() {
+    const agent = HttpProxyAgent(proxy);
+    const res = await axios(url, {
+      httpAgent: agent,
+    });
+    const $ = cheerio.load(res.data);
+    const lastPageElement = $(".pages").children("a").last().attr("href");
+    let lastPage = 0;
+    for (let i = lastPageElement.length - 1; i >= 0; i--) {
+      if (isNaN(Number(lastPageElement[i]))) {
+        lastPage = parseInt(lastPageElement.substring(i + 1));
+        break;
+      }
+    }
+    return lastPage;
+  }
+
   async getHTML(link: string) {
     try {
       const agent = HttpProxyAgent(proxy);
@@ -104,17 +121,16 @@ export default class Scraper {
     if (test) {
       return false;
     }
-    const fixing: IPaste = Object.assign(
-      {},
-      ...Object.entries(paste).map(([k, v]) => {
+    const fixedPaste: IPaste = Object.fromEntries(
+      Object.entries(paste).map(([k, v]) => {
         if (k == "date") {
-          return { [k]: paste.date };
+          return [k, paste.date];
         }
-        return { [k]: removeInitialNonAlphabeticChars(v) };
+        return [k, removeInitialNonAlphabeticChars(v)];
       })
     );
-    if (fixing.title && fixing.content) {
-      return await pushPasteToDB(fixing);
+    if (fixedPaste.title && fixedPaste.content) {
+      return await pushPasteToDB(fixedPaste);
     }
     return false;
   }

@@ -72,7 +72,7 @@ export async function getPastes(
       if (tagsList.length > 0) findQuery["tags"] = { $in: tags };
     }
     const res = await Paste.find(findQuery)
-      .sort([[sort, order as SortOrder]])
+      .sort({ [sort]: order as SortOrder })
       .skip(page * 20 - 20)
       .limit(20);
     const count = await Paste.countDocuments(findQuery);

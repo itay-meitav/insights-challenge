@@ -40,7 +40,7 @@ function Search() {
   }, [searchValue]);
 
   return (
-    <div className="relative ml-3 rounded-md shadow-sm">
+    <div className="rounded-md shadow-sm">
       <Menu
         open={
           !open ||
@@ -57,7 +57,7 @@ function Search() {
             type="text"
             name="search"
             id="search"
-            className="block w-full rounded-md border-gray-300 pl-3 pr-10 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             placeholder="Search Here..."
             disabled={location.pathname !== "/pastes" ? true : false}
             value={searchValue}

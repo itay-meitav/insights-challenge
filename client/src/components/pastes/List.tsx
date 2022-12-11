@@ -9,19 +9,30 @@ import {
 } from "@material-tailwind/react";
 import { useState } from "react";
 import SortingTabs from "../SortingTabs";
-
+import { Spinner } from "flowbite-react";
 // import "tw-elements";
 
 export default function List() {
   const [pastes, setPastes] = useRecoilState(pastesState);
   const [open, setOpen] = useState<number[]>([]);
 
+  if (!pastes.pastes)
+    return (
+      <div
+        className="flex justify-center items-center w-full min-h-screen
+       overflow-hidden bg-white shadow sm:rounded-lg"
+      >
+        <Spinner size="lg" />
+      </div>
+    );
   return (
     <div className="overflow-hidden bg-white shadow sm:rounded-lg">
-      <div className="px-4 py-5 sm:px-6 flex justify-between items-center">
+      <div className="p-8 flex justify-between items-center gap-5">
         <Heading
           heading="Recent Pastes"
-          des="Click on the paste's heading to view its content"
+          des="Click on the paste's heading to view its content. 
+          Also, Click the same tab in order to change the sort
+          from ascending order to descending order and vice versa."
         />
         <SortingTabs />
       </div>

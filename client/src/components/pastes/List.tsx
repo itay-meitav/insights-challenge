@@ -26,15 +26,17 @@ export default function List() {
       </div>
     );
   return (
-    <div className="overflow-hidden bg-white shadow sm:rounded-lg">
-      <div className="p-8 flex justify-between items-center gap-5">
-        <Heading
-          heading="Recent Pastes"
-          des="Click on the paste's heading to view its content. 
+    <div>
+      <div className="overflow-hidden bg-white shadow sm:rounded-lg">
+        <div className="p-8 flex justify-between items-center gap-5">
+          <Heading
+            heading="Recent Pastes"
+            des="Click on the paste's heading to view its content. 
           Also, Click the same tab in order to change the sort
           from ascending order to descending order and vice versa."
-        />
-        <SortingTabs />
+          />
+          <SortingTabs />
+        </div>
       </div>
       <dl>
         {pastes.pastes

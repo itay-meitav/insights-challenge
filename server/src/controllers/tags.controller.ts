@@ -16,7 +16,7 @@ export async function getTags(req: Request, res: Response) {
 }
 
 export async function pushTags(req: Request, res: Response) {
-  if (req.body.tags.length) {
+  if (req.body.tags) {
     const data = await pushTagsDB(req.body);
     if (data) {
       return res.json({ success: true });
@@ -27,7 +27,7 @@ export async function pushTags(req: Request, res: Response) {
     });
   }
   res.status(400).json({
-    message: "Please enter tags list",
+    message: "Please enter at least one tag",
     success: false,
   });
 }

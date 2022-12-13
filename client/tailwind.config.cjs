@@ -11,6 +11,6 @@ module.exports = withMT({
   plugins: [
     require("@tailwindcss/forms"),
     require("flowbite/plugin"),
-    require("tw-elements/dist/plugin"),
+    require("tailwind-scrollbar")({ nocompatible: true }),
   ],
 });

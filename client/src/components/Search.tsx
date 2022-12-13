@@ -57,7 +57,7 @@ function Search() {
             type="text"
             name="search"
             id="search"
-            className="rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            className="rounded-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm  disabled:bg-gray-200"
             placeholder="Search Here..."
             disabled={location.pathname !== "/pastes" ? true : false}
             value={searchValue}

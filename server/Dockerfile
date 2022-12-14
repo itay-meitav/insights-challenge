@@ -32,7 +32,7 @@ COPY --from=build /app/package*.json ./
 
 RUN npm install 
 
-COPY --from=build /app/build ./build
+COPY --from=build /app/dist ./build
 
 ENV NODE_ENV=production
 

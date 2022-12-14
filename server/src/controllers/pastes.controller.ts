@@ -2,18 +2,7 @@ import { Request, Response } from "express";
 import { getPastes as getPastesFromDB } from "../database";
 import { scrapLastPage } from "../scraper";
 
-type TQuery = {
-  page: number;
-  sort: string;
-  order: number;
-  search: string | undefined;
-  tags: boolean;
-};
-
-export async function getPastes(
-  req: Request<{}, {}, {}, TQuery>,
-  res: Response
-) {
+export async function getPastes(req: Request, res: Response) {
   const page = req.query.page || 1;
   const sort = req.query.sort || "date";
   const order = req.query.order || -1;

@@ -6,7 +6,7 @@ import * as chrono from "chrono-node";
 import { IPaste } from "../models/paste.model";
 
 // HTTP/HTTPS proxy to connect to
-const proxy = "http://tor:8118";
+const proxy = "http://tor:9050";
 const url =
   "http://paste2vljvhmwq5zy33re2hzu4fisgqsohufgbljqomib2brzx3q4mid.onion/lists/";
 

@@ -40,13 +40,7 @@ export async function checkForDuplicatesDB(title: string, content: string) {
   }
 }
 
-export async function getPastes(
-  page: number,
-  sort: string,
-  order: number,
-  search: string | null,
-  tags: boolean
-) {
+export async function getPastes(page, sort, order, search, tags) {
   try {
     const tagsList = await getTags();
     let findQuery = {};

@@ -5,6 +5,7 @@ import apiRoute from "./routes/api.route";
 // import { createServer } from "http";
 // import { Server } from "socket.io";
 import { dbConnection } from "./config/connections";
+import path from "path";
 
 const app = express();
 app.use(express.json());
@@ -29,6 +30,13 @@ const port = process.env.PORT || 5000;
     console.log(err.message);
   }
 })();
+
+if (process.env.NODE_ENV == "production") {
+  app.use(express.static(path.join(__dirname, "dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "dist", "index.html"));
+  });
+}
 
 //This will output unhandled Rejection
 process.on("unhandledRejection", (error: Error, promise) => {

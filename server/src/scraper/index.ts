@@ -4,10 +4,7 @@ import Scraper from "./scraper";
 
 export async function scrapAll() {
   const lastPage = await Scraper.getLastPage();
-  console.log(lastPage);
-  return;
-
-  for (let i = lastPage; i > 0; i--) {
+  for (let i = 50; i > 0; i--) {
     const j = i - 1;
     await Promise.all([
       Scraper.scrap(i).then(
@@ -31,7 +28,7 @@ export async function scrapAll() {
   }
   console.log("done");
 }
-scrapAll();
+// scrapAll();
 
 export async function scrapLastPage() {
   const tags = await getTags();

@@ -4,11 +4,14 @@ import HttpProxyAgent from "http-proxy-agent";
 import { checkForDuplicatesDB, pushPasteToDB } from "../database";
 import * as chrono from "chrono-node";
 import { IPaste } from "../models/paste.model";
+import { SocksProxyAgent } from "socks-proxy-agent";
 
-// HTTP/HTTPS proxy to connect to
-const proxy = "http://tor:9050";
-const url =
+const proxy = process.env.SOCKS_PROXY || "socks5h://127.0.0.1:9050";
+const endpoint =
   "http://paste2vljvhmwq5zy33re2hzu4fisgqsohufgbljqomib2brzx3q4mid.onion/lists/";
+const proxyAgent = process.env.SOCKS_PROXY
+  ? HttpProxyAgent(proxy)
+  : new SocksProxyAgent(proxy);
 
 export default class Scraper {
   page: number;
@@ -22,27 +25,31 @@ export default class Scraper {
   }
 
   static async getLastPage() {
-    const agent = HttpProxyAgent(proxy);
-    const res = await axios(url, {
-      httpAgent: agent,
-    });
-    const $ = cheerio.load(res.data);
-    const lastPageElement = $(".pages").children("a").last().attr("href");
-    let lastPage = 0;
-    for (let i = lastPageElement.length - 1; i >= 0; i--) {
-      if (isNaN(Number(lastPageElement[i]))) {
-        lastPage = parseInt(lastPageElement.substring(i + 1));
-        break;
+    try {
+      const res = await axios(endpoint, {
+        httpAgent: proxyAgent,
+      });
+      const $ = cheerio.load(res.data);
+      const lastPageElement = $(".pages").children("a").last().attr("href");
+      let lastPage = 0;
+      for (let i = lastPageElement.length - 1; i >= 0; i--) {
+        if (isNaN(Number(lastPageElement[i]))) {
+          lastPage = parseInt(lastPageElement.substring(i + 1));
+          break;
+        }
       }
+      return lastPage;
+    } catch (error) {
+      console.log("Couldn't get last page");
     }
-    return lastPage;
   }
 
   async getHTML(link: string) {
     try {
-      const agent = HttpProxyAgent(proxy);
+      //Docker
+      // const agent = HttpProxyAgent(proxy);
       const res = await axios(link, {
-        httpAgent: agent,
+        httpAgent: proxy,
       });
       return { success: true, html: res.data };
     } catch (error) {
@@ -65,7 +72,7 @@ export default class Scraper {
   async getPastes() {
     try {
       const page = (this.page - 1) * 50;
-      const res = await this.getHTML(url + page);
+      const res = await this.getHTML(endpoint + page);
       const links = this.getLinks(res.html);
       await Promise.all(
         links.map(async (link) => {

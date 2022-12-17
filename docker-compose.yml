@@ -34,7 +34,7 @@ services:
     container_name: tor
     image: dperson/torproxy:latest
     ports:
-      - 9050:9050
+      - 8118:8118
   mongo:
     image: mongo:latest
     container_name: mongo

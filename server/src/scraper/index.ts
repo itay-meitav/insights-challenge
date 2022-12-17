@@ -2,8 +2,11 @@ import { getTags, getLastDBItem, pushAlert } from "../database/index";
 import * as chrono from "chrono-node";
 import Scraper from "./scraper";
 
-async function scrapAll() {
+export async function scrapAll() {
   const lastPage = await Scraper.getLastPage();
+  console.log(lastPage);
+  return;
+
   for (let i = lastPage; i > 0; i--) {
     const j = i - 1;
     await Promise.all([
@@ -28,8 +31,7 @@ async function scrapAll() {
   }
   console.log("done");
 }
-
-// scrapAll();
+scrapAll();
 
 export async function scrapLastPage() {
   const tags = await getTags();

@@ -2,8 +2,8 @@ version: "3.4"
 
 services:
   client:
-    container_name: client
     hostname: client
+    image: client
     build:
       context: ./client
     ports:
@@ -11,8 +11,8 @@ services:
     depends_on:
       - server
   server:
-    container_name: server
     hostname: server
+    image: server
     build:
       context: ./server
     ports:
@@ -21,17 +21,11 @@ services:
       - mongo
       - tor
   tor:
-    container_name: tor
     image: dperson/torproxy:latest
     ports:
-      - 9050:9050
+      - 8118:8118
   mongo:
     image: mongo:latest
-    container_name: mongo
     restart: always
     ports:
       - 27017:27017
-    volumes:
-      - mongo:/data/db
-volumes:
-  mongo:

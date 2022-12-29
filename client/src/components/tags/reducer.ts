@@ -6,30 +6,28 @@ export function reducer(state: IState, action: IAction): IState {
     case ACTIONS.INIT_TAGS:
       return {
         tags: action.payload?.tags as string[],
-        disabled: action.payload?.tags?.map((x: string, i: number) => {
+        disabled: action.payload?.tags?.map((x, i: number) => {
           return i;
         }) as number[],
       };
     case ACTIONS.ADD_TAG:
       return {
-        tags: state.tags.includes("")
-          ? state.tags
-          : ([...state.tags, ""] as string[]),
-        disabled: state.disabled,
+        tags: state.tags.includes("") ? state.tags : ["", ...state.tags],
+        disabled: state.tags.includes("")
+          ? state.disabled
+          : state.disabled.map((x: number) => x + 1),
       };
     case ACTIONS.REMOVE_TAG:
       return {
-        tags: state.tags.filter((x: string) => !payload?.tags?.includes(x)),
-        disabled: state.tags
-          .filter((x: string) => !payload?.tags?.includes(x))
-          .map((x: string, i: number) => {
-            return i;
-          }) as number[],
+        tags: state.tags.filter((x, i: number) => state.disabled.includes(i)),
+        disabled: state.tags.map((x, i: number) => {
+          return i;
+        }),
       };
     case ACTIONS.EDIT_TAG:
       return {
         tags: state.tags.map((x: string, i: number) => {
-          if (x == payload?.tag && i == payload?.index) {
+          if (x == payload?.tag && payload?.indexes![0] == i) {
             return payload?.newTag;
           }
           return x;
@@ -39,9 +37,7 @@ export function reducer(state: IState, action: IAction): IState {
     case ACTIONS.DISABLED_TAG:
       return {
         tags: state.tags,
-        disabled: state.disabled.includes(payload?.index!)
-          ? state.disabled.filter((x: number) => x !== payload?.index)
-          : [...state.disabled, payload?.index!],
+        disabled: payload?.indexes!,
       };
     default:
       return state;

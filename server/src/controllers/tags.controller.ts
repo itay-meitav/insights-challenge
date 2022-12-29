@@ -17,7 +17,7 @@ export async function getTags(req: Request, res: Response) {
 
 export async function pushTags(req: Request, res: Response) {
   if (req.body.tags) {
-    const data = await pushTagsDB(req.body);
+    const data = await pushTagsDB(req.body.tags);
     if (data) {
       return res.json({ success: true });
     }

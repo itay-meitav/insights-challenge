@@ -5,7 +5,12 @@ export interface IState {
 
 export interface IAction {
   type: ACTIONS;
-  payload?: { tag?: string; newTag?: string; tags?: string[]; index?: number };
+  payload?: {
+    tag?: string;
+    newTag?: string;
+    tags?: string[];
+    indexes?: number[];
+  };
 }
 
 export enum ACTIONS {

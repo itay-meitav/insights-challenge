@@ -12,17 +12,18 @@ function Tags() {
     disabled: [],
   });
   const [errorMessage, setErrorMessage] = useState<string>("");
+  const [disableAll, setDisableAll] = useState(false);
 
   useEffect(() => {
     fetch(`${config.apiHost}api/tags`)
       .then(async (res) => {
         const data = await res.json();
         if (res.ok) {
-          setServerTags([...data.documents, "hey3", "hey4", "hey5"]);
+          setServerTags([...data.documents]);
           dispatch({
             type: ACTIONS.INIT_TAGS,
             payload: {
-              tags: [...data.documents, "hey3", "hey4", "hey5"],
+              tags: [...data.documents],
             },
           });
         } else {
@@ -59,14 +60,17 @@ function Tags() {
                 <div className="flex justify-start items-center text-sm font-medium text-gray-500 gap-3 w-full">
                   <input
                     checked={state.disabled.includes(i) ? false : true}
-                    onChange={() =>
+                    onChange={() => {
                       dispatch({
                         type: ACTIONS.DISABLED_TAG,
                         payload: {
-                          index: i,
+                          indexes: state.disabled.includes(i)
+                            ? state.disabled.filter((x) => x !== i)
+                            : [...state.disabled, i],
                         },
-                      })
-                    }
+                      });
+                      setErrorMessage("");
+                    }}
                     className="h-4 w-4 border border-gray-300 rounded-sm bg-white checked:border-blue-600 focus:outline-none transition duration-200 cursor-pointer"
                     type="checkbox"
                   />
@@ -74,16 +78,17 @@ function Tags() {
                     value={x}
                     disabled={state.disabled.includes(i) ? true : false}
                     type="text"
-                    onChange={(e) =>
+                    onChange={(e) => {
                       dispatch({
                         type: ACTIONS.EDIT_TAG,
                         payload: {
                           tag: x,
-                          index: i,
+                          indexes: [i],
                           newTag: e.currentTarget.value,
                         },
-                      })
-                    }
+                      });
+                      setErrorMessage("");
+                    }}
                     className="px-3 w-1/4 py-1.5 text-base font-normal text-gray-700 bg-white bg-clip-padding border border-solid border-gray-300 rounded transition 
                     ease-in-out focus:text-gray-700 focus:bg-white focus:border-blue-600 focus:outline-none disabled:bg-gray-100"
                     placeholder="New Keyword..."
@@ -98,6 +103,25 @@ function Tags() {
             {errorMessage}
           </div>
           <div className="flex justify-center items-center gap-2">
+            <button
+              onClick={() => {
+                dispatch({
+                  type: ACTIONS.DISABLED_TAG,
+                  payload: {
+                    indexes: disableAll
+                      ? state.tags.map((x: string, i: number) => {
+                          return i;
+                        })
+                      : [],
+                  },
+                });
+                setDisableAll(!disableAll);
+              }}
+              type="button"
+              className="inline-block px-6 py-2.5 bg-gray-200 text-gray-700 font-medium text-xs uppercase rounded-full shadow-md hover:bg-gray-300 hover:shadow-lg focus:bg-gray-300 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-gray-300 active:shadow-lg transition duration-150 ease-in-out"
+            >
+              Select All
+            </button>
             <button
               onClick={() =>
                 dispatch({
@@ -127,11 +151,6 @@ function Tags() {
               onClick={() =>
                 dispatch({
                   type: ACTIONS.REMOVE_TAG,
-                  payload: {
-                    tags: state.tags.filter(
-                      (x: string, i: number) => !state?.disabled?.includes(i)
-                    ),
-                  },
                 })
               }
               type="button"
@@ -160,7 +179,9 @@ function Tags() {
                       Accept: "application/json",
                       "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ tags: state.tags }),
+                    body: JSON.stringify({
+                      tags: state.tags.filter((x: string) => x !== ""),
+                    }),
                   })
                     .then(async (res) => {
                       const data = await res.json();

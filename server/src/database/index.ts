@@ -94,10 +94,14 @@ export async function getTags() {
   }
 }
 
-export async function pushTags(arr: ITag[]) {
+export async function pushTags(arr: string[]) {
   try {
     await dropC("tags").then(() => {
-      Tag.insertMany(arr);
+      Tag.insertMany(
+        arr.map((x) => {
+          return { tag: x };
+        })
+      );
     });
     return true;
   } catch (error) {
